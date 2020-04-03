@@ -3,12 +3,12 @@
 function pick-one-item {
 
   param (
-    [array  ]$thisList        =@('Test1','Test2'), 
-    [string ]$itemDescription ='Item_Description', 
-    [boolean]$gridView        =$false
+    [array  ]$thisList = @('East Asia','South Central US', 'West Europe', 'UAE North', 'South Afraica North'), 
+    [string ]$itemDescription ='Azure Region', 
+    [boolean]$gui = $false
     )
 
-  if ($gridView) {
+  if ($gui) {
 
     $thisOne = $thisList | Out-GridView -Title "$itemDescription List" -PassThru
   
@@ -40,31 +40,34 @@ function pick-one-item {
 }
 
 function azure-vm-image-sku {
-  # usage: azure-vm-image-sku('southcentralus', 'microsoftWindowsServer', 'windows-server-2012-vhd-server-prod-stage')
+
   param (
+
+    [boolean]$gui = $false, 
+    
     [string]$region = (pick-one-item `
       -thisList (Get-AzLocation).DisplayName `
-      -itemDescription 'Azure Region' `
-      -gridView $true),
+      -itemDescription "Azure region" `
+      -gui $gui ),
 
     [string]$publisher = (pick-one-item `
       -thisList (Get-AzVMImagePublisher -Location $region).PublisherName `
-      -itemDescription 'Publisher' `
-      -gridView $true),
+      -itemDescription "Azure $region publisher" `
+      -gui $gui ),
 
     [string]$offer = (pick-one-item `
       -thisList (Get-AzVMImageOffer -Location $region -PublisherName $publisher).offer `
-      -itemDescription 'Offer' `
-      -gridView $true),
-  
-    [string ]$itemDescription ='Sku', 
-    [boolean]$gridView        =$false
+      -itemDescription "Azure $region $publisher's Offer" `
+      -gui $gui ),  
+
+    [string]$itemDescription = "Azure $region $publisher $offer Sku"
+
     )
 
-return $sku = (pick-one-item `
-  -thisList (Get-AzVMImageSku -Location $region -PublisherName $publisher -Offer $offer).skus `
-  -itemDescription $itemDescription `
-  -gridView $gridView )
+  return $sku = (pick-one-item `
+    -thisList (Get-AzVMImageSku -Location $region -PublisherName $publisher -Offer $offer).skus `
+    -itemDescription $itemDescription `
+    -gui $gui )
 
 }
 
