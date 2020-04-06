@@ -71,7 +71,21 @@ function azure-vm-image-sku {
 
 }
 
-#region [RTM]
+function set-up-folder {
+
+    param ([string]$here)
+
+    if (!(Test-Path $here)) { New-Item $here -type directory | out-null 
+         write-host "`nCreated the folder, $here" -f yellow 
+   }
+
+    return $here
+
+}
+
+#endregion [RTM]
+
+#region
 
 function pick-azure-gallery-template-id {
 
@@ -118,18 +132,6 @@ if ($id=( ($argGTobj | where publisher -eq $publisher).Identity -like "*$thisTem
 
 }
 else {return ''}
-
-}
-
-function set-up-folder {
-
-    param ([string]$here)
-
-    if (!(Test-Path $here)) { New-Item $here -type directory | out-null 
-         write-host "`nCreated the folder, $here" -f yellow 
-   }
-
-    return $here
 
 }
 
@@ -205,7 +207,5 @@ function Get-MyVariable
       Where-Object { $builtin -NotContains $_.Name } |
       Select-Object -Property Name, Value, Description
 }
-
-#endregion
 
 #endregion

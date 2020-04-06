@@ -113,5 +113,3 @@ azure-vm-image-sku `
     -offer 'windowsserver' `
     -region 'south central us' `
     -gui $true
-
-azure-vm-image-sku -gui $true 
