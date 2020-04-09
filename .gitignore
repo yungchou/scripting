@@ -1,6 +1,7 @@
 #
 x-info.js
 x*.*
+
 *.lock
 *-lock.json
 _private
