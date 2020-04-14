@@ -85,7 +85,7 @@ function set-up-folder {
 
 #endregion [RTM]
 
-#region
+#region [HOLDING]
 
 function pick-azure-gallery-template-id {
 

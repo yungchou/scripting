@@ -1,15 +1,12 @@
 ﻿
 #region [REQUIRED REFERENCE FILE]
 
-$include="https://dnddaig.blob.core.windows.net/aaa/yc.azure.iaas.v2.0.ps1"
+$include="https://zulustore.blob.core.windows.net/public/yc.azure.iaas.v2.0.ps1"
 try   { iex ($content=(New-Object Net.WebClient).DownloadString($include)) }
 catch { write-host "Error while loading `n$include" -b black -f red; throw 'ERROR!'  }
 Write-Host "Included the file, `n$include" -b black -f green
 
 #endregion
-
-$tag = "$prefix$(get-date -format 'HHmmss')"
-write-host "`nSession ID = $tag" -b black -f green
 
 $prefix='yc'
 $QSKfolder = 'c:\_azure.iaas'  # User-defined
@@ -23,6 +20,8 @@ $azSubName = pick-one-item `
   -itemDescription 'Subscription' `
   -gridView $true
 
+$tag = "$prefix$(get-date -format 'HHmmss')"
+write-host "`nSession ID = $tag" -b black -f green
 
 #endregion
 
