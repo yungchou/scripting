@@ -54,7 +54,7 @@ az vm host group create \
     -c 2 \
     -o table
 
-    -z 1 \
+#    -z 1 \
 
 # HOST
 az vm host create \
