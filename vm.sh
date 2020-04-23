@@ -1,50 +1,105 @@
-# CUSTOMIZATION
-initial='yc'
-
 # Session Start
 az login
+
+# CUSTOMIZATION
+initial='yc'
 
 # Session Tag
 tag=$initial$(date +%M%S)
 
 # Resource Group
 rgName=$tag"rg"
+region='southcentralus'
+
 az group create -n $rgName --location $region -o table
+#az group delete -n $rgName --no-wait -y
 az configure --defaults group=$rgName
 
 # CREATE VM
 vmName=$tag"vm"
 adminID='alice'
 
-region='southcentralus'
 #vmImage='ubuntults'
-#vmImage='win2016datacenter'
-vmImage='win2019datacenter'
+vmImage='win2016datacenter'
+#vmImage='win2019datacenter'
 vmSize='Standard_B2ms'
 
-az vm create \
+# MINIMAL
+vmIPAddress=$(
+  az vm create \
+    -g $rgName \
+    -n $vmName \
+    -l $region \
+    --size $vmSize \
+    --image $vmImage \
+    --admin-username $adminID \
+    --query publicIpAddress \
+    -o table
+  ); echo "vmIPAddress=$vmIPAddress" 
+
+az vm show \
   -g $rgName \
   -n $vmName \
-  -l $region \
-  --size $vmSize \
-  --image $vmImage \
-  --admin-username $adminID \
-  --authentication-type all \
-  --os-disk-name $vmName"-OSDisk" \
-  --nics $vmName"-nic" \
-  --nsg $bmName"-nsg" \
-  --nsg-rume $vmName"-access"
-  --public-ip-address-allocation static \
-  --vnet-name $rgName"-vnet" \
-  --vnet-address-prefix  '10.0.0.0/16' \
-  --subnet-name 'one' \
-  --subnet-address-prefix '10.0.1.0/24' \
-  --boot-diagnostics-storage $rgName"diag" \
   -o table
 
-  --generate-ssh-keys \
-  --validate \
-  --no-wait
+az vm list-vm-resize-options \
+  -g $rgName \
+  -n $vmName \
+  --query "[?contains(name, 'v3')]" \
+  -o table
+
+
+mstsc $vmIPAddress
+
+#  --generate-ssh-keys \
+
+nic=$(
+  az vm show \
+    -g $rgName \
+    -n $vmName \
+    --query 'networkProfile.networkInterfaces[].id' \
+    --output tsv
+  )
+
+az network nic show --ids $nic
+# IP and subnet
+read -d '' vmIP subnetId <<< $(az network nic show \
+  --ids $nic \
+  --query '[ipConfigurations[].publicIpAddress.id, ipConfigurations[].subnet.id]' \
+  -o tsv); echo -e "vmIP=$vmIP \nsubnetId=$subnetId"
+
+# The output format tsv (tab-separated values) is guaranteed to only 
+# include the result data and whitespace consisting of tabs and newlines.
+
+# CUSTOMIZED
+vmIPAddress = $(
+  az vm create \
+    -g $rgName \
+    -n $vmName \
+    -l $region \
+    --size $vmSize \
+    --image $vmImage \
+    --admin-username $adminID \
+    --authentication-type all \
+    --os-disk-name $vmName"-OSDisk" \
+    --nics $vmName"-nic" \
+    --nsg $bmName"-nsg" \
+    --nsg-rume $vmName"-access" \
+    --public-ip-address-allocation static \
+    --vnet-name $rgName"-vnet" \
+    --vnet-address-prefix  '10.0.0.0/16' \
+    --subnet-name 'one' \
+    --subnet-address-prefix '10.0.1.0/24' \
+    --boot-diagnostics-storage $rgName"diag" \
+    --query publicIpAddress \
+    -o table
+  ); echo "vmIPAddress=$vmIPAddress" 
+
+ssh $vmIPAddress
+
+#  --generate-ssh-keys \
+#  --validate \
+# --no-wait
 
 # If to create and attach two 5 GB data disks during vm creation
 # --data-disk-sizes-gb 5 5 \
