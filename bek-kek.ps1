@@ -5,16 +5,24 @@ catch { write-host "Error while loading `n$include" -b black -f red; throw 'ERRO
 Write-Host "Included the file, `n$include" -b black -f green
 #endregion
 
+# Session Tag
 prefix='yc'
+tag=$initial$(date +%M%S)
 
 #region [SET UP TEST VM]
 
-rgName='myRG'
-vmName='myVM'
+rgName=$tag
+vmName=%tsg"-vm"
+
 region='southcentralus'
 vmImg='win2016datacenter'
+#vmImage='ubuntults'
 
 az group create -n $rgName --location $region
+: '
+az group delete -n $rgName --no-wait -y
+az configure --defaults group=$rgName
+'
 
 az vm create -n $vmName -g $rgName --image $vmImg 
 az vm show -n $vmName -g $rgName -o table
@@ -24,7 +32,6 @@ az vm create -n $vmName'U' -g $rgName --image UbuntuLTS --generate-ssh-keys
 
 # Create a vm with cloud-init 
 az vm create -n $vmName'C' -g $rgName --image UbuntuLTS --custom-data mySettings.yml
-
 
 #endregion
 

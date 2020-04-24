@@ -1,11 +1,12 @@
+# https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli?view=azure-cli-latest
 
 az ad sp list \
   --all \
   --show-mine \
+  --query "[].{appDisplayName:appDisplayName, appId:appId, accountEnabled:accountEnabled}" \
   -o table
 
-# this does not work??
-  --query "[*].[{DisplayName:DisplayName, AppId:AppId, AccountEnabled:AccountEnabled}]" \
+# CREATE SERVICE PRINCIPAL
 
 # 1. Password-based authentication
 
@@ -23,7 +24,18 @@ az ad sp list \
 # the certificate from a file.
 
 # Create a self-signed cert
-az ad sp create-for-rbac --name ServicePrincipalName --create-cert -o table
+az ad sp create-for-rbac \
+  --name ServicePrincipalName \
+  --create-cert \
+  -o table
+
+# Create a self-signed cert stored in the keyvault
+az ad sp create-for-rbac \
+  --name ServicePrincipalName \
+  --create-cert \
+  --cert CertName \
+  --keyvault VaultName \
+  -o table
 
 # Use a specifiied cert
 az ad sp create-for-rbac \
@@ -37,9 +49,11 @@ az ad sp create-for-rbac \
 #  --cert @/path/to/cert.pem
 #  --cert CertName --keyvault VaultName
 
+# ASSIGN ROLES
+# When restricting a service principal's permissions, the Contributor role should be removed.
+az role assignment create --assignee APP_ID --role Reader -o table 
+az role assignment delete --assignee APP_ID --role Contributor -o table
+az role assignment list --assignee APP_ID -o table
 
-spName='myServicePrincipalName'
-az ad sp create-for-rbac --name $spName
-
-
-
+# RESET CREDENTIALS
+az ad sp credential reset --name APP_ID

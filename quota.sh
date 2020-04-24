@@ -24,3 +24,4 @@ do
 done
 
 az logout
+

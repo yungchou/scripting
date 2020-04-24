@@ -1,3 +1,5 @@
+
+
 Remove-AzResourceGroupDeployment -ResourceGroupName exampleGroup -Name deploymentName
 
 (Get-AzResourceGroupDeployment -ResourceGroupName exampleGroup).Count
