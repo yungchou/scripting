@@ -2,6 +2,8 @@
 az login
 az account list -o table
 
+#########################################################
+
 # CUSTOMIZATION
 initial='yc'
 
@@ -37,17 +39,18 @@ az vm create -n $vmName -g $rgName -l $region --size $vmSize \
   --generate-ssh-keys --authentication-type all \
   -o table
 
-az vm show -n $vmName -g $rgName -o table
+################################
+
 az vm list -g $rgName -d -o table
 
 # Create a vm with cloud-init 
-az vm create -n $vmName -g $rgName --image UbuntuLTS --custom-data mySettings.yml
+# az vm create -n $vmName -g $rgName --image UbuntuLTS --custom-data mySettings.yml
 
 vmpip=$(
   az vm create -g $rgName -n $vmName -l $region --size $vmSize \
     --admin-username $adminID \
     --query publicIpAddress \
-    --image $vmImage \
+    --image $uImage \
     -o table
   ); echo "vmpip=$vmpip" 
 
