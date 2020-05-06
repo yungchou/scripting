@@ -22,29 +22,29 @@ uImage='ubuntults'
 #w19Image='win2019datacenter'
 vmSize='Standard_B2ms'
 
-az group create -n $rgName --location $region
+az group create -n $rgName -l $region -o table
 
 az vmss create \
 -g $rgName \
 -n $vmssName \
 -l $region \
---app-gateway $vmss"-gateway" \
---backend-pool-name $vmss"-be-pool" \
+--priority Spot \
+--app-gateway $vmssName"-gateway" \
+--backend-pool-name $vmssName"-be-pool" \
 --image $uImage \
 --authentication-type All \
 --generate-ssh-keys \
 --vm-sku $vmSize \
 --admin-username $adminID \
---data-disk-sizes-gb 4 4 \
---instance-count 5 \ # default 2
+--instance-count 5 \
 --disable-overprovision $true \
 --eviction-policy Delete \
 --upgrade-policy Automatic \
 --scale-in-policy OldestVM \
--o table
+--no-wait
 
+# --data-disk-sizes-gb 4 4 \
 # --customer-data cloud_init.yaml
 # --validate
-# --no-wait
 
-az group delete -n $rgName --no-wait --yes 
+# az group delete -n $rgName --no-wait --yes 

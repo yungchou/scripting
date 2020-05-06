@@ -29,50 +29,46 @@ w16Image='win2016datacenter'
 w19Image='win2019datacenter'
 vmSize='Standard_B2ms'
 
-# OPTION 1 - MINIMAL SETTINGS
+:'
+---------------------------
+OPTION 0 - CLOUD-INIT
+---------------------------
+'
+az vm create -n $vmName -g $rgName -l $region --image $uImage \
+  --custom-data mySettings.yml
 
-# Create a default Ubuntu VM with automatic SSH authentication.
-az vm create -n $vmName -g $rgName -l $region --size $vmSize \
-  --admin-username $adminID \
-  --query publicIpAddress \
-  --image $uImage \
-  --generate-ssh-keys --authentication-type all \
-  -o table
-
-################################
-
-az vm list -g $rgName -d -o table
-
-# Create a vm with cloud-init 
-# az vm create -n $vmName -g $rgName --image UbuntuLTS --custom-data mySettings.yml
-
-vmpip=$(
+:'  
+---------------------------
+OPTION 1 - MINIMAL SETTINGS
+---------------------------
+'
+vmPip=$(
   az vm create -g $rgName -n $vmName -l $region --size $vmSize \
+    --image $uImage --generate-ssh-keys --authentication-type all \
     --admin-username $adminID \
-    --query publicIpAddress \
-    --image $uImage \
-    -o table
-  ); echo "vmpip=$vmpip" 
+    --query publicIpAddress\
+    -o tsv
+  ); echo "vmPip=$vmPip" 
 
+:'
 # IP addresses
 az vm show -n $vmName -d --query "[{privateIps:privateIps, publicIps:publicIps}]" -o table
-vmpip=$(az vm show -n $vmName -d --query publicIps); echo "vmpipi=$vmpip"
-mstsc $vmpip
+vmpip=$(az vm show -n $vmName -d --query publicIps); echo "vmPipi=$vmPip"
+
+mstsc $vmPip
+ssh $adminID@$vmPip
 
 az vm list-vm-resize-options \
   -g $rgName \
   -n $vmName \
   --query "[?contains(name, 'v3')]" \
   -o table
-
-#  --generate-ssh-keys \
+'
 
 nic=$(
-  az vm show \
-    -g $rgName \
-    -n $vmName \
+  az vm show -g $rgName -n $vmName \
     --query 'networkProfile.networkInterfaces[].id' \
-    --output tsv
+    -o tsv
   )
 
 az network nic show --ids $nic
@@ -85,36 +81,29 @@ read -d '' vmIP subnetId <<< $(az network nic show \
 # The output format tsv (tab-separated values) is guaranteed to only 
 # include the result data and whitespace consisting of tabs and newlines.
 
-# OPTION 2 - CUSTOMIZED
-
+:'  
+------------------------------
+OPTION 2 - CUSTIMIZED SETTINGS
+------------------------------
+'
 # storage account (for diagnostics)
 storeName=$rgName"store"
 
-az storage account create \
-  -g $rgName \
-  -n $storeName \
-  -l $region \
+az storage account create -g $rgName -n $storeName -l $region \
   --sku Standard_LRS \
   -o table
 
 # NSG group
 nsgName=$rgName"-nsg"
-az network nsg create \
-  -g $rgName \
-  -n $nsgName \
-  -o table
+az network nsg create -g $rgName -n $nsgName -o table
 
 # remote access rule
 baseRule=$rgName"-TestOnly"
 priority=100
 
 az network nsg rule create \
-  -g $rgName \
-  --nsg-name $nsgName \
-  -n $baseRule \
-  --protocol Tcp \
-  --access Allow \
-  --priority $priority \
+  -g $rgName--nsg-name $nsgName  -n $baseRule \
+  --protocol Tcp --access Allow --priority $priority \
   --destination-port-ranges 22 3389 80 443 \
   --description '*** FOR TESTING ONLY, NOT FOR PRODUCTION ***' \
   -o table
@@ -124,23 +113,19 @@ StartTime=$(date +%s)
 
 time \
 vmpip=$(
-  az vm create \
-    -g $rgName \
-    -n $vmName \
-    -l $region \
+  az vm create -g $rgName -n $vmName -l $region --admin-username $adminID \
     --size $vmSize \
     --image $vmImage \
-    --admin-username $adminID \
     --os-disk-name $vmName"-OSDisk" \
     --nsg $nsgName \
-    --public-ip-address-allocation static \
+    --public-ip-address-dns-name $vmName'-pip' --public-ip-address static \
     --vnet-name $rgName"-vnet" \
     --vnet-address-prefix  '10.0.0.0/16' \
     --subnet $rgName"-subnet" \
     --subnet-address-prefix '10.0.1.0/24' \
     --boot-diagnostics-storage $storeName \
     --query publicIpAddress \
-    -o table
+    -o tsv
   ); echo "vmpip=$vmpip" 
 
 endTime=$(date +%s)
