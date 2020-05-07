@@ -8,7 +8,7 @@ export githubSourceCodeURL="https://github.com/jsmith/myWebAppRepo"
 # DEPLOYMENT ROUTINE
 
 export tag=$(date +%M%S)
-export rgName=$tag
+export rgName='rg'$tag
 export servicePlanName='plan'$tag
 export webAppName='webapp'$tag
 
