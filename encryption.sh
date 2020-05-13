@@ -66,7 +66,7 @@ vmPip=$(
 # KEY VAULT
 time \
   az keyvault create -g $rgName -n $kvName  -l $region \
-    --enable-soft-delete true \
+    --enable-soft-delete false \
     --enabled-for-deployment true \
     --enabled-for-disk-encryption true \
     --enabled-for-template-deployment true \
@@ -74,12 +74,12 @@ time \
 
 :'
 05/06/2020 
-The property "enableSoftDelete" must be set to true and not able to create a key vault with
+not able to create a key vault with
     --enable-soft-delete false \
 '
 
 az keyvault update -g $rgName -n $kvName  \
-  --enabled-for-template-deployment false 
+    --enable-soft-delete false
 
 # KEY ENCRYPTION KEY (KEK)
 :'
@@ -113,7 +113,6 @@ time \
     --disk-encryption-keyvault $kvName \
     --volume-type ALL \
     --encrypt-format-all \
-    -o table \
     --key-encryption-key $kekName
 
 # VM encryption status
