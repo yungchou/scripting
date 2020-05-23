@@ -1,5 +1,5 @@
 :'
-Server-side encryption of Azure managed disks
+Server-Side Encryption of Azure-Managed Disks
 https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disk-encryption
 
 Data in Azure managed disks is encrypted transparently using 256-bit AES encryption and is FIPS 140-2 compliant. Encryption does not impact the performance of managed disks. 
