@@ -85,7 +85,7 @@ $vm = Add-AzVMNetworkInterface -VM $vm -Id $nicId;
 $osDiskName = $import.StorageProfile.OsDisk.Name
 
 #$osDiskVhdUri = $orgVm.StorageProfile.OsDisk.Vhd.Uri
-$VirtualMachine = Set-AzureRmVMOSDisk -VM $VirtualMachine -ManagedDiskId $disk.Id -CreateOption Attach -Windows
+$VirtualMachine = Set-AzVMOSDisk -VM $VirtualMachine -ManagedDiskId $disk.Id -CreateOption Attach -Windows
 
 
 $osType = $orgVm.storageprofile.osdisk.ostype

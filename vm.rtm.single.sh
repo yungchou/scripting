@@ -3,8 +3,11 @@
 # Session Start
 az login
 az account list -o table
+az account set -s <Subscription ID or name>
 
+################
 # CUSTOMIZATION
+################
 prefix='da'
 
 ubuntu='ubuntults'
@@ -12,10 +15,18 @@ w16='win2016datacenter'
 w19='win2019datacenter'
 
 # Specify which OS to deploy
+vmImage=$ubuntu
+osType='linux'
+linuxOnly='--generate-ssh-keys --authentication-type all '
+:'
 vmImage=$w16
 osType='windows'
+linuxOnly=''
+'
+
 vmSize='Standard_B2ms'
-adminID="alice"
+adminID='alice'
+ipAllocationMethod='static'
 
 # Use '' if not to open a port
 ssh=22
@@ -33,7 +44,7 @@ tag=$prefix$(date +%M%S)
 rgName=$tag
 region='southcentralus'
 
-vmName=$tag'vm'
+vmName=$tag'-vm'
 vmSize=$vmSize
 
 nicName=$vmName'-nic'
@@ -47,20 +58,11 @@ priority=100
 az group create -n $rgName -l $region -o table
 #az group delete -n $rgName --no-wait -y
 
-az network vnet create -g $rgName -n $vnetName --subnet-name $subnetName
+az network vnet create -g $rgName -n $vnetName --subnet-name $subnetName -o none
 
-az network public-ip create -g $rgName -n $vmIP
+az network public-ip create -g $rgName -n $vmIP -o none --allocation-method $ipAllocationMethod
 
-az network nsg create -g $rgName -n $nsgName
-
-if [ $(echo $osType | [a-z] [A-Z])=='LINUX' ] 
-then 
-  linuxOnly='--generate-ssh-keys --authentication-type all \'
-  if [$ssh==''] then ssh=22  fi # set default to open port 22 for ssh
-else # OSType is windows 
-  linuxOnly=''
-  if [$rdp==''] then rdp=3389 fi # set default to open port 3389 for rdp
-fi
+az network nsg create -g $rgName -n $nsgName -o none
 
 az network nsg rule create -g $rgName \
   --nsg-name $nsgName \
@@ -84,29 +86,17 @@ az network nic list -g $rgName -o table
 
 # CREATE VM AND RETURN THE IP
 vmPip=$(
-  az vm create -g '$rgName' -n '$vmName' -l '$region'  --admin-username '$adminID' \
-    --image '$vmImage' --os-disk-name '$tag'-OSDisk \
-   '$linuxOnly'
-    --nics $nicName --nsg '$nsgName' \
-    --public-ip-address-dns-name '$vmName'-pip --public-ip-address static \
+  az vm create -g $rgName -n $vmName -l $region --admin-username $adminID \
+    --image $vmImage --os-disk-name $tag'-OSDisk' \
+    $linuxOnly \
+    --nics $nicName \
     --query publicIpAddress \
     -o tsv
-  )
+)
+#az vm show -d -g $rgName -n $vmName -o table
 
-az vm create -g $rgName -n $vmName -l $region  --admin-username $adminID \
-  --image $vmImage --os-disk-name 'OsDisk'$tag \
-  --generate-ssh-keys --authentication-type all \
-  --nics $nicName --nsg $nsgName \
-  --public-ip-address-dns-name $vmName'-pip' --public-ip-address static \
-  --query publicIpAddress \
-  -o tsv
-
-
-  
-
-
-az vm show -d -g $rgName -n $vmName -o table
-az network nic list-effective-nsg -g $rgName -n$nicName -o table
+echo VM, $vmName, deployed with the public IP, $vmPip
+az network nic list-effective-nsg -g $rgName -n $nicName -o table
 
 :' Holding place
 

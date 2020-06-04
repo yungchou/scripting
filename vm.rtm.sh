@@ -10,11 +10,11 @@ export adminID='alice'
 #az login
 
 export tag=$(date +%M%S)
-export rgName='rg'$tag
-export vmName='vm'$tag
+export rgName=$tag
+export vmName=$tag'-vm'
 export uImage='ubuntults'
-export servicePlanName='plan'$tag
-export webAppName='webapp'$tag
+export servicePlanName=$tag'-plan'
+export webAppName=$tag'-webapp'
 export priority=100
 
 az group create -n $rgName -l $region -o table
