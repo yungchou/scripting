@@ -26,7 +26,8 @@ $json = "$vmName.json"
 
 # Stop deallocate the VM 
 Stop-AzVM -ResourceGroupName $rgName -Name $vmName -Force -AsJob
-do {Start-Sleep -s 5; echo Waiting...} until ((Get-AzVM -Name $vmName -Status).PowerState -eq 'VM deallocated')
+do { Start-Sleep -s 5; echo Waiting... } 
+until ((Get-AzVM -Name $vmName -Status).PowerState -eq 'VM deallocated')
 Get-AzVM -Name $vm.Name -Status
 
 # Export the configuration  
@@ -143,17 +144,17 @@ Get-AzSubscription
 $subId = 'Subscription ID' 
 Set-AzContext -SubscriptionID $subId  
 
-#Import from json
+# Import from json
 $json = "$vmName.json"
 $import = gc $json -Raw | ConvertFrom-Json
 
-#Create variables for redeployment 
+# Create variables for redeployment 
 $rgName = $import.ResourceGroupName
 $vmName = $import.Name
 $vmSize = $import.HardwareProfile.VmSize
 $loc = $import.Location
 
-#Create the vm config
+# Create the vm config
 $vm = New-AzVMConfig -VMName $vmName -VMSize $vmSize
 
 # Network profile
@@ -172,7 +173,7 @@ $vm.StorageProfile.OsDisk.OsType = $import.StorageProfile.OsDisk.OsType
 
 # Create the VM
 New-AzVM -ResourceGroupName $rgName -Location $loc -VM $vm -AsJob
-do {Start-Sleep -s 10; echo Waiting...} until ((Get-AzVM -Name $vm.Name -Status).PowerState -eq 'VM running')
+do { Start-Sleep -s 10; echo Waiting... } until ((Get-AzVM -Name $vm.Name -Status).PowerState -eq 'VM running')
 Get-AzVM -Name $vm.Name -Status
 
 #endregion Option 2.1
@@ -200,7 +201,7 @@ $nic1Name = 'FirstNetworkInterfaceName'
 $avName = 'AvailabilitySetName'
 $osDiskName = 'OsDiskName'
 $DataDiskName = 'DataDiskName'
-$osType='windows'
+$osType = 'windows'
 
 #This can be found by selecting the Managed Disks you wish you use in the Azure Portal if the format below does not match
 $osDiskResouceId = "/subscriptions/$subid/resourceGroups/$rgName/providers/Microsoft.Compute/disks/$osDiskName";
@@ -221,17 +222,18 @@ $vm = Add-AzVMNetworkInterface -VM $vm -Id $nic1.Id -Primary;
 #$vm = Add-AzVMNetworkInterface -VM $vm -Id $nic2.Id;
 
 $vm = Set-AzVMOSDisk -VM $vm -ManagedDiskId $osDiskResouceId -name $osDiskName -CreateOption Attach -Windows;
-if($osType.ToUpper()=='WINDOWS'){
-  $vm.StorageProfile.OsDisk.OsType='Windows'
-}else{
-  $vm.StorageProfile.OsDisk.OsType='Linux'
+if ($osType.ToUpper() = ='WINDOWS') {
+  $vm.StorageProfile.OsDisk.OsType = 'Windows'
+}
+else {
+  $vm.StorageProfile.OsDisk.OsType = 'Linux'
 }
 
 # Uncomment to add additnal Data Disk
 # Add-AzVMDataDisk -VM $vm -ManagedDiskId $dataDiskResourceId -Name $dataDiskName -Caching None -DiskSizeInGB 1023 -Lun 0 -CreateOption Attach;
 
 New-AzVM -ResourceGroupName $rgName -Location $loc -VM $vm -AsJob
-do {Start-Sleep -s 10; echo Waiting...} until ((Get-AzVM -Name $vm.Name -Status).PowerState -eq 'VM running')
+do { Start-Sleep -s 10; echo Waiting... } until ((Get-AzVM -Name $vm.Name -Status).PowerState -eq 'VM running')
 Get-AzVM -Name $vm.Name -Status
 
 #endregion Option 2.2
