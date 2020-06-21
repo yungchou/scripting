@@ -2,8 +2,8 @@
 
 if ((Get-AzContext) -ne $Null) {
 
-  $vmName = “EncryptedVM”
-  $vault = “javanencKV”
+  $vmName = 'vm1'
+  $vault = 'zookv'
   
   # Get the Secrets for all VM Drives from Azure Key Vault
   Get-AzKeyVaultSecret -VaultName $vault | where { ($_.Tags.MachineName -eq $vmName) -and ($_.ContentType -match 'BEK') } `
@@ -22,8 +22,8 @@ else {
 ## AzureRM version
 Login-AzureRmAccount
   
-$vmName = “EncryptionWinVM”
-$vault = “DiEncVault”
+$vmName = 'vm1'
+$vault = 'zookv'
   
 # Get the Secrets for all VM Drives from Azure Key Vault
 Get-AzureKeyVaultSecret -VaultName $vault | where { ($_.Tags.MachineName -eq $vmName) -and ($_.ContentType -match 'BEK') } `
@@ -32,3 +32,4 @@ Get-AzureKeyVaultSecret -VaultName $vault | where { ($_.Tags.MachineName -eq $vm
 @{Label = "Content Type"; Expression = { $_.ContentType } }, `
 @{Label = "Volume"; Expression = { $_.Tags.VolumeLetter } }, `
 @{Label = "DiskEncryptionKeyFileName"; Expression = { $_.Tags.DiskEncryptionKeyFileName } }
+

@@ -1,6 +1,22 @@
-# Encrypting VMSS
+# VMSS Deployment with minimal settings
 $vmssName = 'vmss'
 $rgName = 'da-test'
+$location = 'southcentralus'
+
+$cred = Get-Credential
+
+New-AzVmss `
+  -ResourceGroupName $rgName `
+  -VMScaleSetName $vmssName `
+  -Location $location `
+  -VirtualNetworkName "$vmssName-vnet" `
+  -SubnetName "sub1" `
+  -PublicIpAddressName "$vmssName-pip" `
+  -LoadBalancerName "$vmss-lb" `
+  -UpgradePolicy "Automatic" `
+  -Credential $cred
+
+# Encrypting VMSS
 $vaultname = 'dakv11'
 $keyEncryptionKeyName = 'vmsskey'
 $location = 'southcentralus'
@@ -14,8 +30,8 @@ Set-AzVmssDiskEncryptionExtension -ResourceGroupName $rgName -VMScaleSetName $vm
 
 Get-AzVmssDiskEncryption -ResourceGroupName $rgName -VMScaleSetName $vmssName
 
-$vmName='vmnodisk'
-$rgName='daade1'
+$vmName = 'vmnodisk'
+$rgName = 'daade1'
 # Disable Encryption: 
 Disable-AzVMDiskEncryption -ResourceGroupName $rgName -VMName $vmName -VolumeType "all"
 

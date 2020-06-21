@@ -19,14 +19,11 @@ vmSize='Standard_DS2_v2'
 vmOSDisk=$vmName"OSDisk"
 snapshotName=$vmName"snap"
 
-az vm create \
-  -g $rgName \
-  -n $vmName \
-  -l $region \
+az vm create -g $rgName -n $vmName -l $region \
   --size $vmSize \
   --image $vmImage \
   --os-disk-name $vmOSDisk \
-  --authentication-type \
+  --authentication-type all \
   --generate-ssh-keys \
   -o table
 
@@ -49,9 +46,7 @@ echo "The VMs are provisioned."
 diskName='mydatadisk'
 diskSize=128
 
-az vm disk attach \
-  -g $rgName \
-  --vm-name $vmName \
+az vm disk attach -g $rgName --vm-name $vmName \
   --name $vmOSDisk \
   --size-gb $diskSize \
   --sku Premium_LRS \
