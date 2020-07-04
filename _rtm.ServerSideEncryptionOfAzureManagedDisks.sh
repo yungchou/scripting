@@ -33,7 +33,7 @@ Using CMK has the following restrictions:
 When you configure customer-managed keys, a managed identity is automatically assigned to your resources under the covers. If you subsequently move the subscription, resource group, or managed disk from one Azure AD directory to another, the managed identity associated with managed disks is not transferred to the new tenant, so customer-managed keys may no longer work.
 '
 
-az login
+az login -o table
 az account list -o table
 
 subscriptionId='Visual Studio Enterprise'

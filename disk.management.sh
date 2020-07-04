@@ -1,5 +1,5 @@
 # CUSTOMIZATION
-initial='yc'
+initial='da'
 
 # Session Start
 az login

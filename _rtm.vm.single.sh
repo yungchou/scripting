@@ -10,29 +10,23 @@ az account set -s <Subscription ID or name>
 ################
 prefix='da'
 
-ubuntu='ubuntults'
-w16='win2016datacenter'
-w19='win2019datacenter'
+#vmImage='ubuntults'
+vmImage='win2016datacenter'
+#vmImage='win2019datacenter'
 
-# Specify which OS to deploy
-vmImage=$ubuntu
-osType='linux'
-linuxOnly='--generate-ssh-keys --authentication-type all '
-:'
-vmImage=$w16
-osType='windows'
-linuxOnly=''
-'
+# Required setting
+osType='linux' 
+#osType='windows'
 
 vmSize='Standard_B2ms'
 adminID='alice'
 ipAllocationMethod='static'
 
-# Use '' if not to open a port
+# Use '' if not to open a service port
 ssh=22
 rdp=3389
 http=80
-https=443
+https=443# S
 
 ##########################
 #  DO NOT CHANGE BELOW 
@@ -85,6 +79,14 @@ az network nic create -g $rgName \
 az network nic list -g $rgName -o table
 
 # CREATE VM AND RETURN THE IP
+If [$(echo $osType | tr [a-z] [A-Z]) == 'LINUX']; 
+then
+echo 'great' 
+linuxOnly='--generate-ssh-keys --authentication-type all '
+:'
+linuxOnly=''
+'
+
 vmPip=$(
   az vm create -g $rgName -n $vmName -l $region --admin-username $adminID \
     --image $vmImage --os-disk-name $tag'-OSDisk' \

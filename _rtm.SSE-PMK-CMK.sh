@@ -22,7 +22,7 @@ Managed disks encrypted using customer-managed keys cannot also be encrypted wit
 For information about using customer-managed keys with shared image galleries, see Preview: Use customer-managed keys for encrypting images.
 '
 
-az login
+az login -o table
 az account list -o table
 
 :'

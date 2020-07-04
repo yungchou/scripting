@@ -1,11 +1,11 @@
 # Session Start
-az login
+az login -o table
 az account list -o table
 
 #########################################################
 
 # CUSTOMIZATION
-initial='yc'
+initial='da'
 
 # Session Tag
 tag=$initial$(date +%M%S)
