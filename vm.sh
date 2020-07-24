@@ -11,8 +11,8 @@ initial='da'
 tag=$initial$(date +%M%S)
 
 # Resource Group
-rgName=$tag"rg"
-region='southcentralus'
+rgName=$tag
+region='eastus2'
 
 az group create -n $rgName --location $region -o table
 : '
@@ -21,20 +21,23 @@ az configure --defaults group=$rgName
 '
 
 # CREATE VM
-vmName=$tag"vm"
+vmName=$tag"-vm"
 adminID='alice'
 
-uImage='ubuntults'
-w16Image='win2016datacenter'
-w19Image='win2019datacenter'
-vmSize='Standard_B2ms'
+#vmImage='ubuntults'
+vmImage='win2016datacenter'
+#vmImage='win2019datacenter'
+
+#vmSize='Standard_B2ms'
+vmSize='Standard_D16_v3'
+#vmSize='Standard_E20ds_v4'
 
 :'
 ---------------------------
 OPTION 0 - CLOUD-INIT
 ---------------------------
 '
-az vm create -n $vmName -g $rgName -l $region --image $uImage \
+az vm create -n $vmName -g $rgName -l $region --image $vmImage \
   --custom-data mySettings.yml
 
 :'  
@@ -44,7 +47,7 @@ OPTION 1 - MINIMAL SETTINGS
 '
 vmPip=$(
   az vm create -g $rgName -n $vmName -l $region --size $vmSize \
-    --image $uImage --generate-ssh-keys --authentication-type all \
+    --image $vmImage --generate-ssh-keys --authentication-type all \
     --admin-username $adminID \
     --query publicIpAddress\
     -o tsv
@@ -102,7 +105,7 @@ baseRule=$rgName"-TestOnly"
 priority=100
 
 az network nsg rule create \
-  -g $rgName--nsg-name $nsgName  -n $baseRule \
+  -g $rgName --nsg-name $nsgName  -n $baseRule \
   --protocol Tcp --access Allow --priority $priority \
   --destination-port-ranges 22 3389 80 443 \
   --description '*** FOR TESTING ONLY, NOT FOR PRODUCTION ***' \
@@ -116,7 +119,7 @@ vmpip=$(
   az vm create -g $rgName -n $vmName -l $region --admin-username $adminID \
     --size $vmSize \
     --image $vmImage \
-    --os-disk-name $vmName"-OSDisk" \
+    --os-disk-name $vmName"-OS-Disk" \
     --nsg $nsgName \
     --public-ip-address-dns-name $vmName'-pip' --public-ip-address static \
     --vnet-name $rgName"-vnet" \

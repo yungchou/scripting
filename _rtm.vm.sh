@@ -12,7 +12,7 @@ export adminID='alice'
 export tag=$(date +%M%S)
 export rgName=$tag
 export vmName=$tag'-vm'
-export uImage='ubuntults'
+export vmImage='ubuntults'
 export servicePlanName=$tag'-plan'
 export webAppName=$tag'-webapp'
 export priority=100
@@ -23,6 +23,10 @@ az group delete -n $rgName --no-wait -y
 
 az group list --query "[?name == '$rgName']"
 az configure --defaults group=$rgName
+
+# -f offer, -s sku, -p publisher
+az vm image list -l southcentralus --all -p MicrosoftWindowsServer -o table # takes minutes
+az vm list-sizes -l $region --location westeurope -o table
 '
 # 
 nsgName='nsg'$tag
@@ -40,7 +44,7 @@ az network nsg rule create \
 # CREATE VM AND RETURN THE IP
 vmPip=$(
   az vm create -g $rgName -n $vmName -l $region  --admin-username $adminID \
-    --image $uImage --os-disk-name $vmName'-OsDisk' \
+    --image $vmImage --os-disk-name $vmName'-OsDisk' \
     --nsg $nsgName \
     --public-ip-address-dns-name $vmName'-pip' --public-ip-address static \
     --query publicIpAddress \

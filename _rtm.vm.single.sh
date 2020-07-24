@@ -10,15 +10,18 @@ az account set -s <Subscription ID or name>
 ################
 prefix='da'
 
-#vmImage='ubuntults'
-vmImage='win2016datacenter'
+vmImage='ubuntults'
+#vmImage='win2016datacenter'
 #vmImage='win2019datacenter'
 
 # Required setting
 osType='linux' 
 #osType='windows'
 
+region='southcentralus'
+#az vm list-skus --location $region --output table
 vmSize='Standard_B2ms'
+
 adminID='alice'
 ipAllocationMethod='static'
 
@@ -26,7 +29,7 @@ ipAllocationMethod='static'
 ssh=22
 rdp=3389
 http=80
-https=443# S
+https=443
 
 ##########################
 #  DO NOT CHANGE BELOW 
@@ -36,13 +39,12 @@ https=443# S
 tag=$prefix$(date +%M%S)
 
 rgName=$tag
-region='southcentralus'
 
 vmName=$tag'-vm'
 vmSize=$vmSize
 
 nicName=$vmName'-nic'
-vnetName=$rgName'-vnet'
+vnetName=$rgName'-net'
 subnetName='sub1'
 nsgName=$rgName'-vnet-nsg'
 nsgRule=$rgName'-TestOnly'
@@ -79,13 +81,13 @@ az network nic create -g $rgName \
 az network nic list -g $rgName -o table
 
 # CREATE VM AND RETURN THE IP
-If [$(echo $osType | tr [a-z] [A-Z]) == 'LINUX']; 
+if [ $(echo $osType | tr [a-z] [A-Z]) == 'LINUX' ]
 then
-echo 'great' 
-linuxOnly='--generate-ssh-keys --authentication-type all '
-:'
-linuxOnly=''
-'
+  echo "Setting the Linux vm, $vmName, with password access" 
+  linuxOnly='--generate-ssh-keys --authentication-type all '
+else
+  linuxOnly=''
+fi
 
 vmPip=$(
   az vm create -g $rgName -n $vmName -l $region --admin-username $adminID \
@@ -97,7 +99,30 @@ vmPip=$(
 )
 #az vm show -d -g $rgName -n $vmName -o table
 
-echo VM, $vmName, deployed with the public IP, $vmPip
+# CREATE VM AND RETURN THE IP
+if [ $(echo $osType | tr [a-z] [A-Z]) == 'LINUX' ]
+then
+  echo "Customizing desktop and RDP for the vm, $vmName..." 
+  storageContainer='https://zulustore.blob.core.windows.net/dnd'
+  theScript='ubuntu.desktop.sh'
+  time \
+  az vm extension set \
+    --name CustomScriptForLinux \
+    --publisher Microsoft.OSTCExtensions \
+    --resource-group $rgName \
+    --vm-name $vmName \
+    --protected-settings '{
+      "storageAccountName": "zulustore",
+      "storageAccountKey": "<storage-account-key>",
+      "commandToExecute": "./$theScript"
+      }' \
+    --settings '{"fileUris":["$storageContainer/$theScript"]}' \
+    -o table
+  az vm get-instance-view -g $rgName -n $vmName \
+    --query "instanceView.extensions"
+fi
+
+echo  "Voilà VM, $vmName, deployed with the public IP, $vmPip"
 az network nic list-effective-nsg -g $rgName -n $nicName -o table
 
 :' Holding place
@@ -111,3 +136,10 @@ az vm open-port -g $rgName -n $vmName \
 az group delete -n $rgName --no-wait -y
 
 '
+
+# Confirm zone for managed disk and IP address
+# https://docs.microsoft.com/en-us/azure/virtual-machines/linux/create-cli-availability-zone#confirm-zone-for-managed-disk-and-ip-address
+osDiskName=$(az vm show -g $rgName -n $vmName --query "storageProfile.osDisk.name" -o tsv)
+az disk show -g $rgName -n $osDiskName
+ipAddressName=$(az vm list-ip-addresses -g $rgName -n $vmName --query "[].virtualMachine.network.publicIpAddresses[].name" -o tsv)
+az network public-ip show -g $rgName -n $ipAddressName
