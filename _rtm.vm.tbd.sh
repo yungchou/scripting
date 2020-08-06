@@ -29,8 +29,8 @@ az vm image list -l southcentralus --all -p MicrosoftWindowsServer -o table # ta
 az vm list-sizes -l $region --location westeurope -o table
 '
 # 
-nsgName='nsg'$tag
-ruleName='rule'$tag 
+nsgName=$tag'-nsg'
+ruleName=$tag'-rule' 
 
 az network nsg create -g $rgName -n $nsgName
 
