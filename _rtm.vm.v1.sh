@@ -29,11 +29,15 @@ prefix='da'
 totalVMs=1
 vmSize='Standard_B2ms'
 region='southcentralus'
+//vmSize='Standard_M64Is'
+//region='westeurope'
 #az vm list-skus --location $region --output table
 bastionSubnet='yes'
+//bastionSubnet='no'
 
 # osType is a required setting
 vmImage='ubuntults'
+//vmImage='sles-15-sp1-byos'
 osType='linux' 
 #vmImage='win2016datacenter'
 #vmImage='win2019datacenter'
@@ -58,9 +62,9 @@ rdp=3389
 http=80
 https=443
 
-##################################
-#  STANDARDIZED ROUTINE FROM HERE
-##################################
+#################################
+# STANDARDIZED ROUTINE FROM HERE
+#################################
 echo "
 Prepping for deploying:
 $totalVMs $osType $vmImage vms in $vmSize size
@@ -88,6 +92,7 @@ az network vnet create -g $rgName -n $vnetName -o none \
   --address-prefixes 10.10.0.0/16 \
   --subnet-name $subnetName --subnet-prefixes "10.10.$subnetName.0/24" 
 
+# Bastion subnet
 if [ $(echo $bastionSubnet | tr [a-z] [A-Z]) == 'YES' ]
 then
   #echo "Adding the Bastion subnet..."
@@ -95,6 +100,7 @@ then
     -n AzureBastionSubnet --address-prefixes 10.10.99.0/24
 fi
 
+# NSG
 #echo "Creating a NSG, $nsgName, associated with the vnet, $vnetName..."
 az network nsg create -g $rgName -n $nsgName -o none
 #echo "Creating a NSG rule, $nsgRule, associated with the NSG ,$nsgName..."
@@ -109,6 +115,7 @@ az network nsg rule create -g $rgName \
   --verbose \
   -o table
 
+# VM
 time \
 for i in `seq 1 $totalVMs`;
 do
@@ -163,12 +170,16 @@ do
 
 done
 
+# Deployed Resources
 #az network vnet show -n $vnetName -g $rgName -o table
 #az network vnet subnet list --vnet-name $vnetName -g $rgName -o table
 #az network nic list -g $rgName -o table
 az vm list -g $rgName -o table -d
 
-:' To clean deployed resources
+###########
+# Clean up
+###########
+:' If to clean up deployed resources
 az group delete -n $rgName --no-wait -y
 '
 

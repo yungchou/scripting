@@ -1,4 +1,7 @@
- 
+#-----------------
+# Recreating a VM
+#----------------- 
+
 # Set context
 Connect-AzAccount 
 Get-AzSubscription

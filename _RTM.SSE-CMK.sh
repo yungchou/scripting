@@ -45,8 +45,10 @@ initial='da'
 region='southcentralus'
 imageName='ubuntults'
 vmSize='Standard_B2ms'
-adminId='alice'
 diskSku='Premium_LRS'
+
+adminID='hendrix'
+adminPwd='4testingonly!'
 
 ################################################################
 
@@ -67,7 +69,7 @@ sizeGb=4
 desName=$ID'-des' # disk encryption set
 storageSku='Standard_LRS' # Standard_LRS, Premium_LRS, StandardSSD_LRS, UltraSSD_LRS
 
-az group create -n $rgName -l $location -o table
+az group create -n $rgName -l $region -o table
 :'
 az group delete -n $rgName --no-wait -y
 az configure --defaults group=$rgName location=$region
@@ -119,19 +121,23 @@ az disk update -n <disk name> -g $rgName \
 
 :'Create a virtual machine scale set using a Marketplace image, encrypting the OS and data disks with customer-managed keys'
 diskEncryptionSetId=$(az disk-encryption-set show -n $desName -g $rgName --query [id] -o tsv)
-
+time \
 az vmss create -g $rgName -n $vmssName -o table \
   --image $imageName  --generate-ssh-keys \
   --upgrade-policy automatic \
-  --admin-username $adminId \
+  --admin-username $adminID --admin-password $adminPwd \
   --os-disk-encryption-set $diskEncryptionSetId \
   --data-disk-sizes-gb $sizeGb $sizeGb \
   --data-disk-encryption-sets $diskEncryptionSetId $diskEncryptionSetId
 
 # az vmss show -g $rgName -n $vmssName -d -o table
 
-:'Create an empty disk encrypted using server-side encryption with customer-managed keys and attach it to a VM'
-
+:'
+-----------------------------------------------------------
+Create an empty disk encrypted using server-side encryption 
+with customer-managed keys and attach it to a VM
+-----------------------------------------------------------
+'
 diskName=$ID'-disk'
 desId=$(az disk-encryption-set show -n $desName -g $rgName --query [id] -o tsv)
 
