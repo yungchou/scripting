@@ -1,6 +1,6 @@
 :'
-Azure Disk Encryption sample scripts
-https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disk-encryption-sample-
+Azure Disk Encryption for Linux VMs
+https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disk-encryption-overview
 
 Quickstart: Create and encrypt a Windows VM with the Azure CLI
 https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-cli-quickstart
