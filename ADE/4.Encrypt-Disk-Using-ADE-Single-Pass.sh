@@ -3,10 +3,16 @@ Azure Disk Encryption for Linux VMs
 https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disk-encryption-overview
 
 Quickstart: Create and encrypt a Windows VM with the Azure CLI
+https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disk-encryption-cli-quickstart
+
+Quickstart: Create and encrypt a Linux VM with the Azure CLI
 https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-cli-quickstart
 
 Enable encryption on a running Windows VM without AAD
 https://azure.microsoft.com/en-us/resources/templates/201-encrypt-running-windows-vm-without-aad/
+
+Creating and configuring a key vault for Azure Disk Encryption
+https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disk-encryption-key-vault
 
 Azure Disk Encryption only encrypts mounted volumes and provides end-to-end encryption for the OS disk, data disks, and the temporary disk with a customer-managed key.
 

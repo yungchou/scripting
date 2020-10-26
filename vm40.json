@@ -1,0 +1,186 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"existingVirtualNetworkResourceGroup": {
+			"defaultValue": "JSON",
+			"type": "String",
+			"metadata": {
+				"description": "#存放已存在Vnet的资源组"
+			}
+		},
+		"existingVirtualNetworkName": {
+			"defaultValue": "vnet",
+			"type": "String",
+			"metadata": {
+				"description": "#规划的Vnet的名字"
+			}
+		},
+		"subnetName": {
+			"defaultValue": "subnet0",
+			"type": "String",
+			"metadata": {
+				"description": "#规划好的子网"
+			}
+		},
+		"adminUsername": {
+			"type": "String",
+			"metadata": {
+				"description": "Admin username"
+			}
+		},
+		"adminPassword": {
+			"type": "SecureString",
+			"metadata": {
+				"description": "Admin password"
+			}
+		},
+		"vmNamePrefix": {
+			"defaultValue": "win2016-",
+			"type": "String",
+			"metadata": {
+				"description": "Prefix to use for VM names"
+			}
+		},
+		"vmSize": {
+			"defaultValue": "Standard_DS2_v2",
+			"type": "String",
+			"metadata": {
+				"description": "Size of the VM"
+			}
+		},
+		"images_url": {
+			"defaultValue": "/subscriptions/33a498f5-360e-40eb-8ebe-a0815485da3d/resourceGroups/JSON/providers/Microsoft.Compute/images/2016image",
+			"type": "String"
+		},
+		"diagstorageAccountName": {
+			"type": "String",
+			"metadata": {
+				"description": "Name of the diagStorage Account"
+			}
+		}
+	},
+	"variables": {
+		"imagePublisher": "MicrosoftWindowsServer",
+		"imageOffer": "WindowsServer",
+		"diagStorageAccountName": "[parameters('diagStorageAccountName')]",
+		"availabilitySetName": "[concat(parameters('vmNamePrefix'),'-AvSet')]",
+		"vnetID": "[resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName'))]",
+		"subnetRef": "[concat(variables('vnetID'),'/subnets/',parameters ('subnetName'))]",
+		"nicNamePrefix": "[concat(parameters('vmNamePrefix'))]"
+	},
+	"resources": [
+		{
+			"type": "Microsoft.Storage/storageAccounts",
+			"apiVersion": "2016-01-01",
+			"name": "[variables('diagStorageAccountName')]",
+			"location": "[resourceGroup().location]",
+			"tags": {
+				"displayName": "DiagStorageAccount"
+			},
+			"sku": {
+				"name": "Standard_LRS"
+			},
+			"kind": "Storage",
+			"properties": {}
+		},
+		{
+			"type": "Microsoft.Compute/availabilitySets",
+			"apiVersion": "2016-04-30-preview",
+			"name": "[variables('availabilitySetName')]",
+			"location": "[resourceGroup().location]",
+			"tags": {
+				"displayName": "AvailabilitySets"
+			},
+			"properties": {
+				"platformFaultDomainCount": "2",
+				"platformUpdateDomainCount": "5",
+				"managed": true
+			}
+		},
+		{
+			"type": "Microsoft.Network/networkInterfaces",
+			"apiVersion": "2016-09-01",
+			"name": "[concat(variables('nicNamePrefix'), copyindex(1))]",
+			"location": "[resourceGroup().location]",
+			"tags": {
+				"displayName": "NetworkInterfaces"
+			},
+			"properties": {
+				"ipConfigurations": [
+					{
+						"name": "ipconfig1",
+						"properties": {
+							"privateIPAllocationMethod": "Dynamic",
+							"subnet": {
+								"id": "[variables('subnetRef')]"
+							}
+						}
+					}
+				]
+			},
+			"copy": {
+				"name": "nicLoop",
+				"count": 40
+			}
+		},
+		{
+			"type": "Microsoft.Compute/virtualMachines",
+			"apiVersion": "2016-04-30-preview",
+			"name": "[concat(parameters('vmNamePrefix'), copyindex(1))]",
+			"location": "[resourceGroup().location]",
+			"dependsOn": [
+				"[concat('Microsoft.Storage/storageAccounts/', variables('diagstorageAccountName'))]",
+				"[concat('Microsoft.Network/networkInterfaces/', variables('nicNamePrefix'), copyindex(1))]",
+				"[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]"
+			],
+			"tags": {
+				"displayName": "VirtualMachines"
+			},
+			"copy": {
+				"name": "virtualMachineLoop",
+				"count": 40
+			},
+			"properties": {
+				"availabilitySet": {
+					"id": "[resourceId('Microsoft.Compute/availabilitySets',variables('availabilitySetName'))]"
+				},
+				"hardwareProfile": {
+					"vmSize": "[parameters('vmSize')]"
+				},
+				"storageProfile": {
+					"imageReference": {
+						"id": "[parameters('images_url')]"
+					},
+					"osDisk": {
+						"osType": "Windows",
+						"name": "[concat(parameters('vmNamePrefix'), copyIndex(1), '_OSdisk1')]",
+						"createOption": "FromImage",
+						"caching": "None",
+						"managedDisk": {
+							"storageAccountType": "Standard_LRS"
+						}
+					}
+				},
+				"osProfile": {
+					"computerName": "[concat(parameters('vmNamePrefix'), copyIndex(1))]",
+					"adminUsername": "[parameters('adminUsername')]",
+					"adminPassword": "[parameters('adminPassword')]"
+				},
+				"networkProfile": {
+					"networkInterfaces": [
+						{
+							"id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('nicNamePrefix'),copyindex(1)))]"
+						}
+					]
+				},
+				"diagnosticsProfile": {
+					"bootDiagnostics": {
+						"enabled": "true",
+						"storageUri": "[concat('http://',parameters('diagstorageAccountName'),'.blob.core.chinacloudapi.cn')]"
+					}
+				}
+			}
+		}
+	]
+}

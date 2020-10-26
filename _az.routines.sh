@@ -25,3 +25,5 @@ rgName=$tag
 az group create -n $rgName --location $region -o table
 # az group delete -n $rgName --no-wait --yes 
 
+subId='subscriptionId'
+az account show --subscription $subId -query tenantId
