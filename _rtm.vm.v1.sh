@@ -32,13 +32,14 @@ region='southcentralus'
 //vmSize='Standard_M64Is'
 //region='westeurope'
 #az vm list-skus --location $region --output table
-bastionSubnet='yes'
-//bastionSubnet='no'
+//bastionSubnet='yes'
+bastionSubnet='no'
 
 # osType is a required setting
 vmImage='ubuntults'
 //vmImage='sles-15-sp1-byos'
-osType='linux' 
+osType='linux'
+ 
 #vmImage='win2016datacenter'
 #vmImage='win2019datacenter'
 #osType='windows'
@@ -97,7 +98,7 @@ if [ $(echo $bastionSubnet | tr [a-z] [A-Z]) == 'YES' ]
 then
   #echo "Adding the Bastion subnet..."
   az network vnet subnet create --vnet-name $vnetName -g $rgName -o none \
-    -n AzureBastionSubnet --address-prefixes 10.10.99.0/24
+    -n AzureBastionSubnet --address-prefixes 10.10.99.0/24 \
 fi
 
 # NSG
