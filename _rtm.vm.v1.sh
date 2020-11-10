@@ -13,13 +13,16 @@ To deploy,
 
 © 2020 Yung Chou. All Rights Reserved.
 '
-
-# Session Start
+#---------
+# CONTEXT
+#---------
+:' As needed
 az login
 
 az account list -o table
-subName='mySubscriptionName'
+subName="mySubscriptionName"
 az account set -s $subName
+'
 
 ################
 # CUSTOMIZATION
@@ -44,17 +47,20 @@ osType='linux'
 #vmImage='win2019datacenter'
 #osType='windows'
 
+:' IF INTERACTIVELY
+read -p "How many VMs to be deployed?" totalVM
+echo "
+Password must have the 3 of the following: 
+1 lower case character, 1 upper case character, 1 number and 1 special character
+"
+read -p "Enter the admin id for the $totalVMs VMs to be deployed " adminUser
+read -sp "Enter the password for the $totalVMs VMs to be deployed " adminPwd
+'
 # For testing
 adminID='hendrix'
 adminPwd='4testingonly!'
-:'
-Password must have the 3 of the following: 
-1 lower case character, 1 upper case character, 1 number and 1 special character
 
-read -p 'How many VMs to be deployed ' totlaVMs
-read -p 'Enter the admin id for the $totalVMs VMs to be deployed ' adminUser
-read -sp 'Enter the password for the $totalVMs VMs to be deployed ' adminPwd
-'
+totalVM=1
 ipAllocationMethod='static'
 
 # Use '' if not to open a service port
@@ -72,7 +78,9 @@ $totalVMs $osType $vmImage vms in $vmSize size
 each with $ipAllocationMethod public IP adderss
 and port $ssh $rdp $http $https open
 "
-
+#---------
+# SESSION 
+#---------
 tag=$prefix$(date +%M%S)
 echo "Session tag = $tag"
 
@@ -118,8 +126,7 @@ az network nsg rule create -g $rgName \
 
 # VM
 time \
-for i in `seq 1 $totalVMs`;
-do
+for i in `seq 1 $totalVM`; do
 
   vmName=$tag'-vm'$i
   echo "Prepping deployment for the vm, $vmName..."

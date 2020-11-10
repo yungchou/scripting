@@ -5,22 +5,47 @@ copying and pasting selected statements to cloud shell.
 #---------------
 # CUSTOMIZATION
 #---------------
-initial='da'
+prefix='da'
+
 region='southcentralus'
-
 vmSize='Standard_B2ms'
-vmImage='ubuntults'
-osType='linux'
 
-#--------------
-# SESSION INFO
-#--------------
-tag=$initial$(date +%M%S)
+#vmImage='ubuntults'
+#osType='linux'
+vmImage='win2019datacenter'
+osType='windows'
 
+:' IF INTERACTIVELY
+read -p "How many VMs to be deployed?" totalVM
+echo "
+Password must have the 3 of the following: 
+1 lower case character, 1 upper case character, 1 number and 1 special character
+"
+read -p "Enter the admin id for the $totalVMs VMs to be deployed " adminUser
+read -sp "Enter the password for the $totalVMs VMs to be deployed " adminPwd
+'
+# For testing
+adminID='hendrix'
+adminPwd='4testingonly!'
+
+totalVM=4
+ipAllocationMethod='static'
+
+#---------
+# CONTEXT
+#---------
 :' As needed
 az login
-az logout
+
+az account list -o table
+subName="mySubscriptionName"
+az account set -s $subName
 '
+#---------
+# SESSION 
+#---------
+tag=$prefix$(date +%M%S)
+echo "Session tag = $tag"
 
 #----------------
 # Resource Group
@@ -31,28 +56,74 @@ az group create -n $rgName --location $region -o table
 :'To clean up
 az group delete -g $rgName -y --no-wait
 '
+
 #----------- 
 # CREATE VM
 #-----------
-vmName=$tag'-vm'
-vmOSDisk=$vmName'-OSDisk'
+time \
+for i in `seq 1 $totalVM`; do
 
-az vm create -g $rgName -n $vmName -l $region \
-  --size $vmSize \
-  --image $vmImage \
-  --os-disk-name $vmOSDisk \
-  --authentication-type all \
-  --generate-ssh-keys \
-  --no-wait
+  vmName=$tag'-vm'$i
+  echo "Prepping deployment for the vm, $vmName..."
 
-# If to create and attach two 4 GB data disks during vm creation
-# --data-disk-sizes-gb 4 4 \
+  osDiskName=$vmName'OSDisk'
 
+  # CREATE VM AND RETURN THE IP
+  if [ $(echo $osType | tr [a-z] [A-Z]) == 'LINUX' ]
+  then
+    echo "Configuring the Linux vm, $vmName, with password access" 
+    linuxOnly='--generate-ssh-keys --authentication-type all '
+  else
+    linuxOnly=''
+  fi
+
+:' 
+----------------
+METHOD 1 - Batch
+----------------
+'
+  az vm create -g $rgName -n $vmName -l $region --size $vmSize \
+    --admin-username $adminID --admin-password $adminPwd \
+    --image $vmImage --os-disk-name $osDiskName \
+    $linuxOnly \
+    --public-ip-address-allocation $ipAllocationMethod \
+    --no-wait
+
+  echo "Deployment submitted for the vm, $vmName ..."
 :'
-# Wait for the VMs to be provisioned
+--------------------
+METHOD 2 - REAL-TIME
+--------------------
+
+  echo "Creating the vm, $vmName now..."
+  pubIP=$(
+    az vm create -g $rgName -n $vmName -l $region --size $vmSize \
+      --admin-username $adminID --admin-password $adminPwd \
+      --image $vmImage --os-disk-name $osDiskName \
+      $linuxOnly \
+      --public-ip-address-allocation $ipAllocationMethod \
+      --query publicIpAddress \
+      --verbose \
+      -o tsv
+
+      # If to create and attach two 4 GB data disks during vm creation
+      # --data-disk-sizes-gb 4 4 \
+
+  )
+  #az vm show -d -g $rgName -n $vmName -o table
+  echo  "
+  --------------------------------------------------------------------------------------
+  Voilà! The VM, $vmName, has been deployed with the $ipAllocationMethod public IP, $pubIP
+  --------------------------------------------------------------------------------------
+  "
+'
+done
+
+:' Check vm provisioning state
+az vm list -g $rgName -d -o table
 az vm list -g $rgName --query [].provisioningState -o tsv
 
-# if 3 items to be provisions
+# if 3 items (e.g. vm + 2 data disks) to be provisions
 while [[ $(az vm list -g $rgName --query "length([?provisioningState=='Succeeded'])") != 3 ]]; do
     echo "The VMs are still not provisioned. Trying again in 20 seconds."
     sleep 20
@@ -62,9 +133,15 @@ while [[ $(az vm list -g $rgName --query "length([?provisioningState=='Succeeded
     fi
 done
 echo 'The VMs are provisioned.'
-
 '
 
+
+################################################
+
+:' Names given
+rgName=''
+vmName=''
+'
 #-------------------------------
 # ATTACH DISK TO AN EXISTING VM
 #-------------------------------
