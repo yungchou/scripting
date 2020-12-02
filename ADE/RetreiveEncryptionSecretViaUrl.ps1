@@ -7,6 +7,12 @@ Install-Module -Name AzureRM -AllowClobber
 Import-Module -Name AzureRM
 #>
 
+<#
+Make sure the authenticated user has at least 
+'get' and 'unwrap' key 
+enabled in the key vaut acess policies.
+#>
+
 Param(
   [Parameter(Mandatory = $true,
     HelpMessage = "URL to the secret stored in the keyvault")]

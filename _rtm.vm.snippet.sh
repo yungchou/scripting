@@ -7,6 +7,14 @@ copying and pasting selected statements to cloud shell.
 #---------------
 prefix='da'
 
+# For testing -------------------- 
+# Omit for interactively entering
+adminID='hendrix'
+adminPwd='4testingonly!'
+#---------------------------------
+
+totalVM=1
+
 region='southcentralus'
 vmSize='Standard_B2ms'
 
@@ -24,11 +32,6 @@ Password must have the 3 of the following:
 read -p "Enter the admin id for the $totalVMs VMs to be deployed " adminUser
 read -sp "Enter the password for the $totalVMs VMs to be deployed " adminPwd
 '
-# For testing
-adminID='hendrix'
-adminPwd='4testingonly!'
-
-totalVM=4
 ipAllocationMethod='static'
 
 #---------
@@ -60,7 +63,6 @@ az group delete -g $rgName -y --no-wait
 #----------- 
 # CREATE VM
 #-----------
-time \
 for i in `seq 1 $totalVM`; do
 
   vmName=$tag'-vm'$i
@@ -134,7 +136,6 @@ while [[ $(az vm list -g $rgName --query "length([?provisioningState=='Succeeded
 done
 echo 'The VMs are provisioned.'
 '
-
 
 ################################################
 
