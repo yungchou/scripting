@@ -1,0 +1,154 @@
+az vm show -n $vmName -g $rgName
+{
+  "additionalCapabilities": null,
+  "availabilitySet": null,
+  "billingProfile": null,
+  "diagnosticsProfile": {
+    "bootDiagnostics": {
+      "enabled": true,
+      "storageUri": null
+    }
+  },
+  "evictionPolicy": null,
+  "extensionsTimeBudget": null,
+  "hardwareProfile": {
+    "vmSize": "Standard_B2ms"
+  },
+  "host": null,
+  "hostGroup": null,
+  "id": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/zulu-vm/providers/Microsoft.Compute/virtualMachines/w19",
+  "identity": null,
+  "instanceView": null,
+  "licenseType": null,
+  "location": "southcentralus",
+  "name": "w19",
+  "networkProfile": {
+    "networkInterfaces": [
+      {
+        "id": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/zulu-vm/providers/Microsoft.Network/networkInterfaces/w19541",
+        "primary": null,
+        "resourceGroup": "zulu-vm"
+      }
+    ]
+  },
+  "osProfile": {
+    "adminPassword": null,
+    "adminUsername": "alice",
+    "allowExtensionOperations": true,
+    "computerName": "w19",
+    "customData": null,
+    "linuxConfiguration": null,
+    "requireGuestProvisionSignal": true,
+    "secrets": [],
+    "windowsConfiguration": {
+      "additionalUnattendContent": null,
+      "enableAutomaticUpdates": true,
+      "patchSettings": {
+        "patchMode": "AutomaticByOS"
+      },
+      "provisionVmAgent": true,
+      "timeZone": null,
+      "winRm": null
+    }
+  },
+  "plan": null,
+  "priority": null,
+  "provisioningState": "Succeeded",
+  "proximityPlacementGroup": null,
+  "resourceGroup": "zulu-vm",
+  "resources": [
+    {
+      "autoUpgradeMinorVersion": true,
+      "enableAutomaticUpgrade": null,
+      "forceUpdateTag": null,
+      "id": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/zulu-vm/providers/Microsoft.Compute/virtualMachines/w19/extensions/BGInfo",
+      "instanceView": null,
+      "location": "southcentralus",
+      "name": "BGInfo",
+      "protectedSettings": null,
+      "provisioningState": "Succeeded",
+      "publisher": "Microsoft.Compute",
+      "resourceGroup": "zulu-vm",
+      "settings": null,
+      "tags": null,
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "typeHandlerVersion": "2.1",
+      "virtualMachineExtensionType": "BGInfo"
+    },
+    {
+      "autoUpgradeMinorVersion": true,
+      "enableAutomaticUpgrade": null,
+      "forceUpdateTag": null,
+      "id": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/zulu-vm/providers/Microsoft.Compute/virtualMachines/w19/extensions/enablevmaccess",
+      "instanceView": null,
+      "location": "southcentralus",
+      "name": "enablevmaccess",
+      "protectedSettings": null,
+      "provisioningState": "Succeeded",
+      "publisher": "Microsoft.Compute",
+      "resourceGroup": "zulu-vm",
+      "settings": {
+        "UserName": "alice"
+      },
+      "tags": null,
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "typeHandlerVersion": "2.0",
+      "virtualMachineExtensionType": "VMAccessAgent"
+    },
+    {
+      "autoUpgradeMinorVersion": true,
+      "enableAutomaticUpgrade": null,
+      "forceUpdateTag": null,
+      "id": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/zulu-vm/providers/Microsoft.Compute/virtualMachines/w19/extensions/MicrosoftMonitoringAgent",
+      "instanceView": null,
+      "location": "southcentralus",
+      "name": "MicrosoftMonitoringAgent",
+      "protectedSettings": null,
+      "provisioningState": "Succeeded",
+      "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+      "resourceGroup": "zulu-vm",
+      "settings": {
+        "workspaceId": "8b98576c-eeb3-4f71-bb8f-4b0ec638e692"
+      },
+      "tags": null,
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "typeHandlerVersion": "1.0",
+      "virtualMachineExtensionType": "MicrosoftMonitoringAgent"
+    }
+  ],
+  "securityProfile": null,
+  "storageProfile": {
+    "dataDisks": [],
+    "imageReference": {
+      "exactVersion": "17763.1457.2009030514",
+      "id": null,
+      "offer": "WindowsServer",
+      "publisher": "MicrosoftWindowsServer",
+      "sku": "2019-Datacenter",
+      "version": "latest"
+    },
+    "osDisk": {
+      "caching": "ReadWrite",
+      "createOption": "FromImage",
+      "diffDiskSettings": null,
+      "diskSizeGb": null,
+      "encryptionSettings": null,
+      "image": null,
+      "managedDisk": {
+        "diskEncryptionSet": null,
+        "id": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/ZULU-VM/providers/Microsoft.Compute/disks/w19",
+        "resourceGroup": "ZULU-VM",
+        "storageAccountType": null
+      },
+      "name": "w19",
+      "osType": "Windows",
+      "vhd": null,
+      "writeAcceleratorEnabled": false
+    }
+  },
+  "tags": null,
+  "type": "Microsoft.Compute/virtualMachines",
+  "virtualMachineScaleSet": null,
+  "vmId": "634348e0-a0d1-47a4-912c-124e2f1ed1d3",
+  "zones": null
+}

@@ -10,7 +10,6 @@ az vm create -g $rgName -n $vmName \
   --admin-username azureuser \
   --generate-ssh-keys
 
-
 # image gallery
 az group create --name myGalleryRG --location eastus
 az sig create --resource-group myGalleryRG --gallery-name myGallery
