@@ -1,0 +1,208 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "eastus"
+        },
+        "virtualMachineScaleSetName": {
+            "value": "myvmss"
+        },
+        "virtualMachineScaleSetRG": {
+            "value": "thisvmss"
+        },
+        "singlePlacementGroup": {
+            "value": "false"
+        },
+        "instanceSize": {
+            "value": "Standard_B2ms"
+        },
+        "instanceCount": {
+            "value": "2"
+        },
+        "upgradeMode": {
+            "value": "Manual"
+        },
+        "priority": {
+            "value": "Regular"
+        },
+        "enableAcceleratedNetworking": {
+            "value": "false"
+        },
+        "subnetId": {
+            "value": "/subscriptions/cf2deb86-affb-4ba9-8848-ec9428335fa2/resourceGroups/cczTest/providers/Microsoft.Network/virtualNetworks/cczTest-vnet/subnets/default"
+        },
+        "osDiskType": {
+            "value": "Premium_LRS"
+        },
+        "dataDisks": {
+            "value": [
+                {
+                    "lun": 0,
+                    "createOption": "empty",
+                    "caching": "None",
+                    "writeAcceleratorEnabled": false,
+                    "id": null,
+                    "name": "myvmss_DataDisk_0",
+                    "storageAccountType": "Premium_LRS",
+                    "diskSizeGB": 4,
+                    "diskIOPSReadWrite": -1,
+                    "diskMBpsReadWrite": -1,
+                    "diskEncryptionSet": null
+                }
+            ]
+        },
+        "addressPrefixes": {
+            "value": [
+                "10.1.0.0/24"
+            ]
+        },
+        "subnets": {
+            "value": [
+                {
+                    "name": "default",
+                    "properties": {
+                        "addressPrefix": "10.1.0.0/24"
+                    }
+                }
+            ]
+        },
+        "virtualNetworkId": {
+            "value": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/thisvmss/providers/Microsoft.Network/virtualNetworks/thisvmss-vnet"
+        },
+        "virtualNetworkName": {
+            "value": "thisvmss-vnet"
+        },
+        "networkSecurityGroups": {
+            "value": [
+                {
+                    "name": "basicNsgthisvmss-vnet-nic01",
+                    "id": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/thisvmss/providers/Microsoft.Network/networkSecurityGroups/basicNsgthisvmss-vnet-nic01",
+                    "rules": []
+                }
+            ]
+        },
+        "networkInterfaceConfigurations": {
+            "value": [
+                {
+                    "name": "thisvmss-vnet-nic01",
+                    "primary": true,
+                    "subnetId": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/thisvmss/providers/Microsoft.Network/virtualNetworks/thisvmss-vnet/subnets/default",
+                    "applicationGatewayBackendAddressPools": [],
+                    "loadBalancerBackendAddressPools": [
+                        {
+                            "id": "[parameters('backendPoolId')]"
+                        }
+                    ],
+                    "applicationSecurityGroups": [],
+                    "loadBalancerInboundNatPools": [
+                        {
+                            "id": "[parameters('inboundNatPoolId')]"
+                        }
+                    ],
+                    "enableAcceleratedNetworking": false,
+                    "nsgName": "basicNsgthisvmss-vnet-nic01",
+                    "nsgId": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/thisvmss/providers/Microsoft.Network/networkSecurityGroups/basicNsgthisvmss-vnet-nic01",
+                    "pipName": ""
+                }
+            ]
+        },
+        "publicIpAddressName": {
+            "value": "myvmss-ip"
+        },
+        "backendPoolName": {
+            "value": "bepool"
+        },
+        "backendPoolId": {
+            "value": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/thisvmss/providers/Microsoft.Network/loadBalancers/myvmss-lb/backendAddressPools/bepool"
+        },
+        "loadBalancerName": {
+            "value": "myvmss-lb"
+        },
+        "inboundNatPoolId": {
+            "value": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/thisvmss/providers/Microsoft.Network/loadBalancers/myvmss-lb/inboundNatPools/natpool"
+        },
+        "vmName": {
+            "value": "myvmss"
+        },
+        "scaleInPolicy": {
+            "value": {
+                "rules": [
+                    "Default"
+                ]
+            }
+        },
+        "instanceTermincationNotificationNotBeforeTimeout": {
+            "value": "PT7M"
+        },
+        "overprovision": {
+            "value": true
+        },
+        "upgradePolicy": {
+            "value": "Rolling"
+        },
+        "maxBatchInstancePercent": {
+            "value": 20
+        },
+        "maxUnhealthyInstancePercent": {
+            "value": 20
+        },
+        "maxUnhealthyUpgradedInstancePercent": {
+            "value": 20
+        },
+        "pauseTimeBetweenBatches": {
+            "value": "PT2S"
+        },
+        "adminUsername": {
+            "value": "alice"
+        },
+        "adminPassword": {
+            "value": null
+        },
+        "autoScaleDefault": {
+            "value": "1"
+        },
+        "autoScaleMin": {
+            "value": "1"
+        },
+        "autoScaleMax": {
+            "value": "10"
+        },
+        "scaleOutCPUPercentageThreshold": {
+            "value": "75"
+        },
+        "durationTimeWindow": {
+            "value": "10"
+        },
+        "scaleOutInterval": {
+            "value": "1"
+        },
+        "scaleInCPUPercentageThreshold": {
+            "value": "25"
+        },
+        "scaleInInterval": {
+            "value": "1"
+        },
+        "autoscaleDiagnosticLogsWorkspaceId": {
+            "value": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourcegroups/defaultresourcegroup-scus/providers/microsoft.operationalinsights/workspaces/defaultworkspace-501dac25-f925-43f6-af0d-ff5418ddc9b7-scus"
+        },
+        "healthExtensionProtocol": {
+            "value": "http"
+        },
+        "healthExtensionPort": {
+            "value": 80
+        },
+        "healthExtensionRequestPath": {
+            "value": "/"
+        },
+        "autoRepairsPolicyEnabled": {
+            "value": true
+        },
+        "gracePeriod": {
+            "value": "PT30M"
+        },
+        "platformFaultDomainCount": {
+            "value": "5"
+        }
+    }
+}
