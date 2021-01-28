@@ -1,4 +1,7 @@
-https://github.com/Azure/azure-quickstart-templates/blob/master/201-vm-dedicated-hosts/README.md
+https://github.com/Azure/azure-quickstart-templates/tree/master/201-vm-dedicated-hosts
+
+REST API
+https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fazure-quickstart-templates%2Fmaster%2F201-vm-dedicated-hosts%2Fazuredeploy.json
 
 Overview
 This templates provisions a dedicated environment using Azure Dedicated Hosts. You provide the number of zones, how many hosts in each zone and the rest is taken care of by the template.

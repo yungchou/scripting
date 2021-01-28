@@ -11,3 +11,11 @@ _private
 /node_modules
 /public/node_modules
 /server/config/x-info.js
+
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.pyc

@@ -1,6 +1,9 @@
 # Session Start
 az login -o table
+
 az account list -o table
+subName="mySubscriptionName"
+az account set -s $subName
 
 #########################################################
 

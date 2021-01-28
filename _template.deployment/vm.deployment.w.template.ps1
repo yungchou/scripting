@@ -1,7 +1,7 @@
- 
+
 # Set the variables:
  
-$subscriptionID = "1f0ed1e5-b8ed-4ef8-a9b6-b65ffc80350e"
+$subscriptionID = "??"
 $rgname = "recreateVM"
 $vmname = "recreateVM"
  

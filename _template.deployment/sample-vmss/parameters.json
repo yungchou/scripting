@@ -6,10 +6,10 @@
             "value": "eastus"
         },
         "virtualMachineScaleSetName": {
-            "value": "myvmss"
+            "value": "vmssName"
         },
         "virtualMachineScaleSetRG": {
-            "value": "thisvmss"
+            "value": "rgName"
         },
         "singlePlacementGroup": {
             "value": "false"
@@ -33,7 +33,7 @@
             "value": "/subscriptions/cf2deb86-affb-4ba9-8848-ec9428335fa2/resourceGroups/cczTest/providers/Microsoft.Network/virtualNetworks/cczTest-vnet/subnets/default"
         },
         "osDiskType": {
-            "value": "Premium_LRS"
+            "value": "StandardSSD_LRS"
         },
         "dataDisks": {
             "value": [
@@ -43,9 +43,9 @@
                     "caching": "None",
                     "writeAcceleratorEnabled": false,
                     "id": null,
-                    "name": "myvmss_DataDisk_0",
+                    "name": "vmssName_DataDisk_0",
                     "storageAccountType": "Premium_LRS",
-                    "diskSizeGB": 4,
+                    "diskSizeGB": 128,
                     "diskIOPSReadWrite": -1,
                     "diskMBpsReadWrite": -1,
                     "diskEncryptionSet": null
@@ -68,26 +68,54 @@
             ]
         },
         "virtualNetworkId": {
-            "value": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/thisvmss/providers/Microsoft.Network/virtualNetworks/thisvmss-vnet"
+            "value": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/rgName/providers/Microsoft.Network/virtualNetworks/rgName-vnet"
         },
         "virtualNetworkName": {
-            "value": "thisvmss-vnet"
+            "value": "rgName-vnet"
         },
         "networkSecurityGroups": {
             "value": [
                 {
-                    "name": "basicNsgthisvmss-vnet-nic01",
-                    "id": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/thisvmss/providers/Microsoft.Network/networkSecurityGroups/basicNsgthisvmss-vnet-nic01",
+                    "name": "basicNsgrgName-vnet-nic01",
+                    "id": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/rgName/providers/Microsoft.Network/networkSecurityGroups/basicNsgrgName-vnet-nic01",
                     "rules": []
+                },
+                {
+                    "name": "vmssName-nsg",
+                    "id": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/rgName/providers/Microsoft.Network/networkSecurityGroups/vmssName-nsg",
+                    "rules": [
+                        {
+                            "name": "default-allow-ssh",
+                            "properties": {
+                                "priority": 1000,
+                                "protocol": "TCP",
+                                "access": "Allow",
+                                "direction": "Inbound",
+                                "sourceApplicationSecurityGroups": [],
+                                "destinationApplicationSecurityGroups": [],
+                                "sourceAddressPrefix": "*",
+                                "sourcePortRange": "*",
+                                "destinationAddressPrefix": "*",
+                                "destinationPortRange": "22"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "publicIpAddresses": {
+            "value": [
+                {
+                    "name": "publicIp-newNic"
                 }
             ]
         },
         "networkInterfaceConfigurations": {
             "value": [
                 {
-                    "name": "thisvmss-vnet-nic01",
+                    "name": "rgName-vnet-nic01",
                     "primary": true,
-                    "subnetId": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/thisvmss/providers/Microsoft.Network/virtualNetworks/thisvmss-vnet/subnets/default",
+                    "subnetId": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/rgName/providers/Microsoft.Network/virtualNetworks/rgName-vnet/subnets/default",
                     "applicationGatewayBackendAddressPools": [],
                     "loadBalancerBackendAddressPools": [
                         {
@@ -101,57 +129,82 @@
                         }
                     ],
                     "enableAcceleratedNetworking": false,
-                    "nsgName": "basicNsgthisvmss-vnet-nic01",
-                    "nsgId": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/thisvmss/providers/Microsoft.Network/networkSecurityGroups/basicNsgthisvmss-vnet-nic01",
+                    "nsgName": "basicNsgrgName-vnet-nic01",
+                    "nsgId": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/rgName/providers/Microsoft.Network/networkSecurityGroups/basicNsgrgName-vnet-nic01",
                     "pipName": ""
+                },
+                {
+                    "name": "newNic",
+                    "primary": false,
+                    "subnetId": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/rgName/providers/Microsoft.Network/virtualNetworks/rgName-vnet/subnets/default",
+                    "applicationGatewayBackendAddressPools": [],
+                    "loadBalancerBackendAddressPools": [],
+                    "applicationSecurityGroups": [],
+                    "loadBalancerInboundNatPools": [],
+                    "enableAcceleratedNetworking": false,
+                    "nsgName": "vmssName-nsg",
+                    "nsgId": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/rgName/providers/Microsoft.Network/networkSecurityGroups/vmssName-nsg",
+                    "pipName": "publicIp-newNic"
                 }
             ]
         },
         "publicIpAddressName": {
-            "value": "myvmss-ip"
+            "value": "vmssName-ip"
         },
         "backendPoolName": {
             "value": "bepool"
         },
         "backendPoolId": {
-            "value": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/thisvmss/providers/Microsoft.Network/loadBalancers/myvmss-lb/backendAddressPools/bepool"
+            "value": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/rgName/providers/Microsoft.Network/loadBalancers/vmssName-lb/backendAddressPools/bepool"
         },
         "loadBalancerName": {
-            "value": "myvmss-lb"
+            "value": "vmssName-lb"
         },
         "inboundNatPoolId": {
-            "value": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/thisvmss/providers/Microsoft.Network/loadBalancers/myvmss-lb/inboundNatPools/natpool"
+            "value": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/rgName/providers/Microsoft.Network/loadBalancers/vmssName-lb/inboundNatPools/natpool"
+        },
+        "healthProbeRequestPath": {
+            "value": "/"
+        },
+        "healthProbeProtocol": {
+            "value": "HTTP"
+        },
+        "healthProbePort": {
+            "value": 80
+        },
+        "healthProbeNumberOfProbes": {
+            "value": 5
+        },
+        "healthProbeId": {
+            "value": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/rgName/providers/Microsoft.Network/loadBalancers/vmssName-lb/probes/healthProbe89979e6a-248a-4392-99b7-bc802d8884e3"
         },
         "vmName": {
-            "value": "myvmss"
+            "value": "vmssName"
         },
         "scaleInPolicy": {
             "value": {
                 "rules": [
-                    "Default"
+                    "NewestVM"
                 ]
             }
         },
         "instanceTermincationNotificationNotBeforeTimeout": {
             "value": "PT7M"
         },
+        "diagnosticStorageAccount": {
+            "value": "rgnamediag"
+        },
+        "diagnosticsStorageAccountKind": {
+            "value": "Storage"
+        },
+        "diagnosticsStorageAccountType": {
+            "value": "Standard_LRS"
+        },
         "overprovision": {
             "value": true
         },
         "upgradePolicy": {
-            "value": "Rolling"
-        },
-        "maxBatchInstancePercent": {
-            "value": 20
-        },
-        "maxUnhealthyInstancePercent": {
-            "value": 20
-        },
-        "maxUnhealthyUpgradedInstancePercent": {
-            "value": 20
-        },
-        "pauseTimeBetweenBatches": {
-            "value": "PT2S"
+            "value": "Manual"
         },
         "adminUsername": {
             "value": "alice"
@@ -159,50 +212,21 @@
         "adminPassword": {
             "value": null
         },
-        "autoScaleDefault": {
-            "value": "1"
-        },
-        "autoScaleMin": {
-            "value": "1"
-        },
-        "autoScaleMax": {
-            "value": "10"
-        },
-        "scaleOutCPUPercentageThreshold": {
-            "value": "75"
-        },
-        "durationTimeWindow": {
-            "value": "10"
-        },
-        "scaleOutInterval": {
-            "value": "1"
-        },
-        "scaleInCPUPercentageThreshold": {
-            "value": "25"
-        },
-        "scaleInInterval": {
-            "value": "1"
-        },
-        "autoscaleDiagnosticLogsWorkspaceId": {
-            "value": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourcegroups/defaultresourcegroup-scus/providers/microsoft.operationalinsights/workspaces/defaultworkspace-501dac25-f925-43f6-af0d-ff5418ddc9b7-scus"
-        },
-        "healthExtensionProtocol": {
-            "value": "http"
-        },
-        "healthExtensionPort": {
-            "value": 80
-        },
-        "healthExtensionRequestPath": {
-            "value": "/"
-        },
         "autoRepairsPolicyEnabled": {
             "value": true
         },
         "gracePeriod": {
             "value": "PT30M"
         },
+        "zone": {
+            "value": [
+                "1",
+                "2",
+                "3"
+            ]
+        },
         "platformFaultDomainCount": {
-            "value": "5"
+            "value": "1"
         }
     }
 }

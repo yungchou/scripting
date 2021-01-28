@@ -1,0 +1,26 @@
+# Captures the specified resource group as a template.
+https://docs.microsoft.com/en-us/rest/api/resources/ResourceGroups/ExportTemplate
+
+#---------
+
+POST https://management.azure.com/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/exportTemplate?api-version=2020-06-01
+
+Request Body
+{
+  "resources": [
+    "*"
+  ],
+  "options": "IncludeParameterDefaultValue,IncludeComments"
+}
+
+#----------
+
+POST https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/my-resource-group/exportTemplate?api-version=2020-06-01
+
+# With filtering
+{
+  "resources": [
+    "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/my-resource-group/providers/My.RP/myResourceType/myFirstResource"
+  ],
+  "options": "SkipResourceNameParameterization"
+}

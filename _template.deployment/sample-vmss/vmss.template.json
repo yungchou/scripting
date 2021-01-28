@@ -1,142 +1,305 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "location": {
-            "type": "string"
+            "type": "string",
+            "allowedValues": [
+                "eastus",
+                "eastus2",
+                "centralus",
+                "southcentralus",
+                "westus",
+                "westus2"
+            ],
+            "defaultValue": "southcentralus",
+            "metadata": {
+                "description": "Azure region for the deployment"
+            }
         },
         "virtualMachineScaleSetName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "vmss"
         },
         "virtualMachineScaleSetRG": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "da-[utcNow(ffff)]"
         },
         "singlePlacementGroup": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "false"
         },
         "instanceSize": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "Standard_B2ms",
+            "allowedValues": [
+                "Standard_B2ms",
+                "Standard_B4ms",
+                "Standard_D2s_v3",
+                "Standard_D4s_v3"
+            ]
         },
         "instanceCount": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "2"
         },
         "upgradeMode": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "Manual"
         },
         "priority": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "Regular"
         },
         "enableAcceleratedNetworking": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "false"
         },
         "subnetId": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "/subscriptions/cf2deb86-affb-4ba9-8848-ec9428335fa2/resourceGroups/cczTest/providers/Microsoft.Network/virtualNetworks/cczTest-vnet/subnets/default"
         },
         "osDiskType": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "Premium_LRS",
+            "allowedValues": [
+                "Stangdard_LRS",
+                "Premium_GRS"
+            ]
         },
         "dataDisks": {
-            "type": "array"
+            "type": "array",
+            "defaultValue": [
+                {
+                    "lun": 0,
+                    "createOption": "empty",
+                    "caching": "None",
+                    "writeAcceleratorEnabled": false,
+                    "id": null,
+                    "name": "[concat(parameters('vmName'),'-datadisk_0')]",
+                    "storageAccountType": "[parameters('osDiskType')]",
+                    "diskSizeGB": 4,
+                    "diskIOPSReadWrite": -1,
+                    "diskMBpsReadWrite": -1,
+                    "diskEncryptionSet": null
+                }
+            ]
         },
         "addressPrefixes": {
-            "type": "array"
+            "type": "array",
+            "defaultValue": [
+                "10.10.10.0/24"
+            ],
+            "allowedValues": [
+                "10.10.10.0/24",
+                "192.168.168.0/24",
+                "172.16.16.0/24"
+            ]
         },
         "subnets": {
-            "type": "array"
+            "type": "array",
+            "defaultValue": [
+                {
+                    "name": "default",
+                    "properties": {
+                        "addressPrefix": "addressPrefixes"
+                    }
+                }
+            ]
         },
         "virtualNetworkId": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/thisvmss/providers/Microsoft.Network/virtualNetworks/thisvmss-vnet"
         },
         "virtualNetworkName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "[concat(parameters('virtualMachineScaleSetRG'),'-net')]"
         },
         "networkSecurityGroups": {
-            "type": "array"
-        },
-        "publicIpAddresses": {
-            "type": "array"
+            "type": "array",
+            "defaultValue": [
+                {
+                "name":"[concat(parameters('virtualMachineScaleSetRG'),'-sg')]",
+                    "id": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/thisvmss/providers/Microsoft.Network/networkSecurityGroups/basicNsgthisvmss-vnet-nic01",
+                "rules":[]
+                }
+
+            ]
         },
         "networkInterfaceConfigurations": {
-            "type": "array"
+            "type": "array",
+            "defaultValue": [
+                {
+                    "name": "[concat(parameters('virtualNetworkName'),'-nic-',utcNow('fff'))]",
+                    "primary": true,
+                    "applicationGatewayBackendAddressPools": [],
+                    "loadBalancerBackendAddressPools": [
+                        {
+                            "id": "[parameters('backendPoolId')]"
+                        }
+                    ],
+                    "applicationSecurityGroups": [],
+                    "loadBalancerInboundNatPools": [
+                        {
+                            "id": "[parameters('inboundNatPoolId')]"
+                        }
+                    ],
+                    "enableAcceleratedNetworking": false,
+                    "nsgName": "[parameters('networkSecurityGroups')]",
+                    "pipName": ""
+                }
+            ]
         },
         "publicIpAddressName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "[concat(parameters('vmName'),'-pip')]"
         },
         "backendPoolName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue":"bePool"
         },
         "backendPoolId": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/thisvmss/providers/Microsoft.Network/loadBalancers/myvmss-lb/backendAddressPools/bepool"
         },
         "loadBalancerName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "[concat(parameters('virtualMachineScaleSetName'), '-lb')]"
         },
         "inboundNatPoolId": {
-            "type": "string"
-        },
-        "healthProbeRequestPath": {
-            "type": "string"
-        },
-        "healthProbeProtocol": {
-            "type": "string"
-        },
-        "healthProbePort": {
-            "type": "int"
-        },
-        "healthProbeNumberOfProbes": {
-            "type": "int"
-        },
-        "healthProbeId": {
             "type": "string"
         },
         "vmName": {
             "type": "string"
         },
         "scaleInPolicy": {
-            "type": "object"
+            "type": "object",
+            "defaultValue": {
+                "rules": [
+                    "Default"
+                ]
+            },
+            "allowedValues": [
+                "Default",
+                "NewestVM"
+            ]
         },
         "instanceTermincationNotificationNotBeforeTimeout": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "PT7M"
         },
         "diagnosticStorageAccount": {
-            "type": "string"
+            "value": "rgnamediag"
         },
         "diagnosticsStorageAccountKind": {
-            "type": "string"
+            "value": "Storage"
         },
         "diagnosticsStorageAccountType": {
-            "type": "string"
+            "value": "Standard_LRS"
         },
         "overprovision": {
-            "type": "bool"
+            "type": "bool",
+            "defaultValue": true
         },
         "upgradePolicy": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "Rolling",
+            "allowedValues": [
+                "Automatic",
+                "Manual",
+                "Rolling"
+            ]
+        },
+        "maxBatchInstancePercent": {
+            "type": "int",
+            "defaultValue": "20"
+        },
+        "maxUnhealthyInstancePercent": {
+            "type": "int",
+            "defaultValue": "20"
+        },
+        "maxUnhealthyUpgradedInstancePercent": {
+            "type": "int",
+            "defaultValue": "20"
+        },
+        "pauseTimeBetweenBatches": {
+            "type": "string",
+            "defaultValue": "PT2S"
         },
         "adminUsername": {
             "type": "string"
         },
         "adminPassword": {
-            "type": "secureString"
+            "type": "secureString",
+            "defaultValue": null
+        },
+        "autoScaleDefault": {
+            "type": "string",
+            "defaultValue": "1"
+        },
+        "autoScaleMin": {
+            "type": "string",
+            "defaultValue": "1"
+        },
+        "autoScaleMax": {
+            "type": "string",
+            "defaultValue": "10"
+        },
+        "scaleOutCPUPercentageThreshold": {
+            "type": "string",
+            "defaultValue": "75"
+        },
+        "durationTimeWindow": {
+            "type": "string",
+            "defaultValue": "10"
+        },
+        "scaleOutInterval": {
+            "type": "string",
+            "defaultValue": "1"
+        },
+        "scaleInCPUPercentageThreshold": {
+            "type": "string",
+            "defaultValue": "25"
+        },
+        "scaleInInterval": {
+            "type": "string",
+            "defaultValue": "1"
+        },
+        "autoscaleDiagnosticLogsWorkspaceId": {
+            "type": "string"
+        },
+        "healthExtensionProtocol": {
+            "type": "string",
+            "defaultValue": "http"
+        },
+        "healthExtensionPort": {
+            "type": "int",
+            "defaultValue": "80"
+        },
+        "healthExtensionRequestPath": {
+            "type": "string",
+            "defaultValue": "/"
         },
         "autoRepairsPolicyEnabled": {
-            "type": "bool"
+            "type": "bool",
+            "defaultValue": true
         },
         "gracePeriod": {
-            "type": "string"
-        },
-        "zone": {
-            "type": "array"
+            "type": "string",
+            "defaultValue": "PT30M"
         },
         "platformFaultDomainCount": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "5"
         }
     },
     "variables": {
         "storageApiVersion": "2019-04-01",
         "loadBalancerId": "[resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancerName'))]",
         "backendPoolId": "[concat(variables('loadBalancerId'), '/backendAddressPools/', parameters('backendPoolName'))]",
-        "namingInfix": "[toLower(substring(concat(parameters('virtualMachineScaleSetName'), uniqueString(resourceGroup().id)), 0, 9))]"
+        "namingInfix": "[toLower(substring(concat(parameters('virtualMachineScaleSetName'), uniqueString(resourceGroup().id)), 0, 9))]",
+        "vmssId": "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSetName'))]",
+        "autoScaleResourceName": "[concat(parameters('virtualMachineScaleSetName'), 'autoscale')]"
     },
     "resources": [
         {
@@ -149,6 +312,9 @@
                     "addressPrefixes": "[parameters('addressPrefixes')]"
                 },
                 "subnets": "[parameters('subnets')]"
+            },
+            "tags": {
+                "this_tag_name": "this_tag_value"
             }
         },
         {
@@ -162,23 +328,9 @@
             "copy": {
                 "name": "networkSecurityGroups",
                 "count": "[length(parameters('networkSecurityGroups'))]"
-            }
-        },
-        {
-            "name": "[parameters('publicIpAddresses')[copyIndex()].name]",
-            "type": "Microsoft.Network/publicIPAddresses",
-            "location": "[parameters('location')]",
-            "apiVersion": "2019-02-01",
-            "sku": {
-                "name": "Standard"
             },
-            "properties": {
-                "publicIPAllocationMethod": "Static",
-                "idleTimeoutInMinutes": 15
-            },
-            "copy": {
-                "name": "publicIpAddresses",
-                "count": "[length(parameters('publicIpAddresses'))]"
+            "tags": {
+                "this_tag_name": "this_tag_value"
             }
         },
         {
@@ -191,6 +343,9 @@
             },
             "properties": {
                 "publicIPAllocationMethod": "Static"
+            },
+            "tags": {
+                "this_tag_name": "this_tag_value"
             }
         },
         {
@@ -247,23 +402,6 @@
                             "numberOfProbes": 2,
                             "loadBalancingRules": []
                         }
-                    },
-                    {
-                        "id": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/rgName/providers/Microsoft.Network/loadBalancers/vmssName-lb/probes/healthProbe89979e6a-248a-4392-99b7-bc802d8884e3",
-                        "name": "healthProbe89979e6a-248a-4392-99b7-bc802d8884e3",
-                        "properties": {
-                            "protocol": "HTTP",
-                            "port": 80,
-                            "requestPath": "[parameters('healthProbeRequestPath')]",
-                            "intervalInSeconds": 5,
-                            "numberOfProbes": 5,
-                            "loadBalancingRules": [
-                                {
-                                    "id": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/rgName/providers/Microsoft.Network/loadBalancers/vmssName-lb/loadBalancingRules/lbRule89979e6a-248a-4392-99b7-bc802d8884e3"
-                                }
-                            ]
-                        },
-                        "type": "Microsoft.Network/loadBalancers/probes"
                     }
                 ],
                 "loadBalancingRules": [
@@ -286,41 +424,97 @@
                                 "id": "[concat(variables('loadBalancerId'),'/probes/tcpProbe')]"
                             }
                         }
-                    },
+                    }
+                ]
+            },
+            "tags": {
+                "this_tag_name": "this_tag_value"
+            }
+        },
+        {
+            "type": "Microsoft.Insights/autoscaleSettings",
+            "apiVersion": "2015-04-01",
+            "name": "[variables('autoScaleResourceName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachineScaleSets/', parameters('virtualMachineScaleSetName'))]"
+            ],
+            "properties": {
+                "name": "[variables('autoScaleResourceName')]",
+                "targetResourceUri": "[variables('vmssId')]",
+                "enabled": true,
+                "profiles": [
                     {
-                        "id": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/rgName/providers/Microsoft.Network/loadBalancers/vmssName-lb/loadBalancingRules/lbRule89979e6a-248a-4392-99b7-bc802d8884e3",
-                        "name": "lbRule89979e6a-248a-4392-99b7-bc802d8884e3",
-                        "properties": {
-                            "enableFloatingIP": false,
-                            "loadDistribution": "Default",
-                            "protocol": "TCP",
-                            "idleTimeoutInMinutes": 5,
-                            "frontendPort": 81,
-                            "backendPort": 81,
-                            "frontendIPConfiguration": {
-                                "id": "[concat(variables('loadBalancerId'), '/frontendIPConfigurations/loadBalancerFrontEnd')]"
+                        "name": "Profile1",
+                        "capacity": {
+                            "minimum": "[parameters('autoScaleMin')]",
+                            "maximum": "[parameters('autoScaleMax')]",
+                            "default": "[parameters('autoScaleDefault')]"
+                        },
+                        "rules": [
+                            {
+                                "metricTrigger": {
+                                    "metricName": "Percentage CPU",
+                                    "metricNamespace": "",
+                                    "metricResourceUri": "[variables('vmssId')]",
+                                    "timeGrain": "PT1M",
+                                    "statistic": "Average",
+                                    "timeWindow": "[concat('PT', parameters('durationTimeWindow'), 'M')]",
+                                    "timeAggregation": "Average",
+                                    "operator": "GreaterThan",
+                                    "threshold": "[parameters('scaleOutCPUPercentageThreshold')]"
+                                },
+                                "scaleAction": {
+                                    "direction": "Increase",
+                                    "type": "ChangeCount",
+                                    "value": "[parameters('scaleOutInterval')]",
+                                    "cooldown": "PT1M"
+                                }
                             },
-                            "backendAddressPool": {
-                                "id": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/rgName/providers/Microsoft.Network/loadBalancers/vmssName-lb/backendAddressPools/bepool"
-                            },
-                            "probe": {
-                                "id": "/subscriptions/501dac25-f925-43f6-af0d-ff5418ddc9b7/resourceGroups/rgName/providers/Microsoft.Network/loadBalancers/vmssName-lb/probes/healthProbe89979e6a-248a-4392-99b7-bc802d8884e3"
+                            {
+                                "metricTrigger": {
+                                    "metricName": "Percentage CPU",
+                                    "metricNamespace": "",
+                                    "metricResourceUri": "[variables('vmssId')]",
+                                    "timeGrain": "PT1M",
+                                    "statistic": "Average",
+                                    "timeWindow": "PT5M",
+                                    "timeAggregation": "Average",
+                                    "operator": "LessThan",
+                                    "threshold": "[parameters('scaleInCPUPercentageThreshold')]"
+                                },
+                                "scaleAction": {
+                                    "direction": "Decrease",
+                                    "type": "ChangeCount",
+                                    "value": "[parameters('scaleInInterval')]",
+                                    "cooldown": "PT1M"
+                                }
                             }
-                        }
+                        ]
                     }
                 ]
             }
         },
         {
-            "name": "[parameters('diagnosticStorageAccount')]",
-            "type": "Microsoft.Storage/storageAccounts",
-            "apiVersion": "2019-04-01",
-            "location": "[parameters('location')]",
-            "properties": {},
-            "sku": {
-                "name": "[parameters('diagnosticsStorageAccountType')]"
-            },
-            "kind": "[parameters('diagnosticsStorageAccountKind')]"
+            "type": "Microsoft.Insights/autoscalesettings/providers/diagnosticSettings",
+            "name": "[concat(variables('autoScaleResourceName'), '/Microsoft.Insights/diagSetting', variables('namingInfix'))]",
+            "dependsOn": [
+                "[variables('autoScaleResourceName')]"
+            ],
+            "apiVersion": "2017-05-01-preview",
+            "properties": {
+                "workspaceId": "[parameters('autoscaleDiagnosticLogsWorkspaceId')]",
+                "logs": [
+                    {
+                        "category": "AutoscaleEvaluations",
+                        "enabled": true
+                    },
+                    {
+                        "category": "AutoscaleScaleActions",
+                        "enabled": true
+                    }
+                ]
+            }
         },
         {
             "name": "[parameters('virtualMachineScaleSetName')]",
@@ -330,10 +524,8 @@
             "dependsOn": [
                 "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]",
                 "networkSecurityGroups",
-                "publicIpAddresses",
                 "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]",
-                "[variables('loadBalancerId')]",
-                "[concat('Microsoft.Storage/storageAccounts/', parameters('diagnosticStorageAccount'))]"
+                "[variables('loadBalancerId')]"
             ],
             "sku": {
                 "name": "[parameters('instanceSize')]",
@@ -345,6 +537,12 @@
                     "mode": "[parameters('upgradePolicy')]",
                     "automaticOSUpgradePolicy": {
                         "enableAutomaticOSUpgrade": true
+                    },
+                    "rollingUpgradePolicy": {
+                        "maxBatchInstancePercent": "[parameters('maxBatchInstancePercent')]",
+                        "maxUnhealthyInstancePercent": "[parameters('maxUnhealthyInstancePercent')]",
+                        "maxUnhealthyUpgradedInstancePercent": "[parameters('maxUnhealthyUpgradedInstancePercent')]",
+                        "pauseTimeBetweenBatches": "[parameters('pauseTimeBetweenBatches')]"
                     }
                 },
                 "singlePlacementGroup": "[parameters('singlePlacementGroup')]",
@@ -413,13 +611,25 @@
                                     }
                                 }
                             }
-                        ],
-                        "healthProbe": {
-                            "id": "[parameters('healthProbeId')]"
-                        }
+                        ]
                     },
                     "extensionProfile": {
-                        "extensions": []
+                        "extensions": [
+                            {
+                                "name": "HealthExtension",
+                                "properties": {
+                                    "publisher": "Microsoft.ManagedServices",
+                                    "type": "ApplicationHealthLinux",
+                                    "typeHandlerVersion": "1.0",
+                                    "autoUpgradeMinorVersion": false,
+                                    "settings": {
+                                        "protocol": "[parameters('healthExtensionProtocol')]",
+                                        "port": "[parameters('healthExtensionPort')]",
+                                        "requestPath": "[parameters('healthExtensionRequestPath')]"
+                                    }
+                                }
+                            }
+                        ]
                     },
                     "scheduledEventsProfile": {
                         "terminateNotificationProfile": {
@@ -429,8 +639,7 @@
                     },
                     "diagnosticsProfile": {
                         "bootDiagnostics": {
-                            "enabled": true,
-                            "storageUri": "[reference(parameters('diagnosticStorageAccount'), variables('storageApiVersion')).primaryEndpoints.blob]"
+                            "enabled": true
                         }
                     },
                     "osProfile": {
@@ -440,19 +649,18 @@
                     }
                 },
                 "scaleInPolicy": "[parameters('scaleInPolicy')]",
-                "additionalCapabilities": {
-                    "ultraSSDEnabled": true
-                },
                 "automaticRepairsPolicy": {
                     "enabled": "[parameters('autoRepairsPolicyEnabled')]",
                     "gracePeriod": "[parameters('gracePeriod')]"
                 },
                 "platformFaultDomainCount": "[parameters('platformFaultDomainCount')]"
             },
-            "zones": "[parameters('zone')]"
+            "tags": {
+                "this_tag_name": "this_tag_value"
+            }
         },
         {
-            "name": "microsoft.custom-script-linux-20210105125822",
+            "name": "microsoft.network-watcher-linux-20210104161421",
             "apiVersion": "2015-01-01",
             "type": "Microsoft.Resources/deployments",
             "properties": {
@@ -469,47 +677,30 @@
                         },
                         "location": {
                             "type": "string"
-                        },
-                        "fileUris": {
-                            "type": "array"
-                        },
-                        "commandToExecute": {
-                            "type": "securestring"
                         }
                     },
                     "resources": [
                         {
-                            "name": "[concat(parameters('vmName'),'/CustomScript')]",
+                            "name": "[concat(parameters('vmName'),'/AzureNetworkWatcherExtension')]",
                             "type": "Microsoft.Compute/virtualMachineScaleSets/extensions",
                             "location": "[parameters('location')]",
                             "apiVersion": "2015-06-15",
                             "properties": {
-                                "publisher": "Microsoft.Azure.Extensions",
-                                "type": "CustomScript",
-                                "typeHandlerVersion": "2.0",
+                                "publisher": "Microsoft.Azure.NetworkWatcher",
+                                "type": "NetworkWatcherAgentLinux",
+                                "typeHandlerVersion": "1.4",
                                 "autoUpgradeMinorVersion": true,
-                                "settings": {
-                                    "fileUris": "[parameters('fileUris')]"
-                                },
-                                "protectedSettings": {
-                                    "commandToExecute": "[parameters('commandToExecute')]"
-                                }
+                                "settings": {}
                             }
                         }
                     ]
                 },
                 "parameters": {
                     "vmName": {
-                        "value": "vmssName"
+                        "value": "myvmss"
                     },
                     "location": {
                         "value": "eastus"
-                    },
-                    "fileUris": {
-                        "value": []
-                    },
-                    "commandToExecute": {
-                        "value": "sh script.sh"
                     }
                 }
             },
