@@ -170,3 +170,13 @@ az disk create -n $diskName -g $rg -l $loc \
 
 #diskId=$(az disk show -n $diskName -g $rgName --query [id] -o tsv)
 az vm disk attach --vm-name $vm -n $diskName -o table
+
+
+# DES (Disk Encryption Set) resources
+rgName=''
+desName=''
+subId=''
+
+az disk-encryption-set list-associated-resources -o table \
+	-g $rgName -n $desName --subscription $subId 
+

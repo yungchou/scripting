@@ -146,7 +146,8 @@ vmName=''
 #-------------------------------
 # ATTACH DISK TO AN EXISTING VM
 #-------------------------------
-dataDiskName='mydatadisk'
+#vmName='myVM'
+dataDiskName=$vmName'-datadisk'
 diskSize=4
 
 az vm disk attach -g $rgName -n $dataDiskName \

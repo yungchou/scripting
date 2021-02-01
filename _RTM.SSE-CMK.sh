@@ -170,3 +170,12 @@ az disk show -g $rgName -n $diskName -o table \
 
 az disk list -g $rgName -o table \
   --query "[?name=='$diskName'].{Name:name,resoureGroup:resourceGroup,Location:region,Sku:sku.name,DiskSizeGb:diskSizeGb,Encryption:encryption.type,Provisioning:provisioningState,DiskState:diskState}"
+
+# DES (Disk Encryption Set) resources
+rgName=''
+desName=''
+subId=''
+
+az disk-encryption-set list-associated-resources -o table \
+	-g $rgName -n $desName --subscription $subId 
+
