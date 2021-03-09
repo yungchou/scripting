@@ -1,20 +1,53 @@
 :'
-Azure Disk Encryption, i.e. encryptions at rest models, https://docs.microsoft.com/en-us/azure/security/fundamentals/encryption-atrest, use a key hierarchy made up of the types of keys:
+Azure Disk Encryption, i.e. encryptions at rest, 
+https://docs.microsoft.com/en-us/azure/security/fundamentals/encryption-atrest, 
+uses a key hierarchy made up of the types of keys:
 
-Data Encryption Key (DEK) – A symmetric AES256 key used to encrypt a partition or block of data. A single resource may have many partitions and many Data Encryption Keys. Encrypting each block of data with a different key makes crypto analysis attacks more difficult. Access to DEKs is needed by the resource provider or application instance that is encrypting and decrypting a specific block. When a DEK is replaced with a new key only the data in its associated block must be re-encrypted with the new key.
+Data Encryption Key (DEK)
 
-Key Encryption Key (KEK) – An encryption key used to encrypt the Data Encryption Keys. Use of a Key Encryption Key that never leaves Key Vault allows the data encryption keys themselves to be encrypted and controlled. The entity that has access to the KEK may be different than the entity that requires the DEK. An entity may broker access to the DEK to limit the access of each DEK to a specific partition. Since the KEK is required to decrypt the DEKs, the KEK is effectively a single point by which DEKs can be effectively deleted by deletion of the KEK.
+- A symmetric AES256 key used to encrypt a partition or block of data. 
+  A single resource may have many partitions and many Data Encryption Keys. 
+  Encrypting each block of data with a different key makes crypto 
+  analysis attacks more difficult. 
 
-The Data Encryption Keys, encrypted with the Key Encryption Keys are stored separately and only an entity with access to the Key Encryption Key can decrypt these Data Encryption Keys.
+- Access to DEKs is needed by the resource provider or application instance 
+  that is encrypting and decrypting a specific block. When a DEK is replaced 
+  with a new key only the data in its associated block must be re-encrypted 
+  with the new key.
 
-Client Encryption model refers to encryption that is performed outside of the Resource Provider or Azure by the service or calling application.
+Key Encryption Key (KEK)
 
-Server-side Encryption models refer to encryption that is performed by the Azure service. In that model, the Resource Provider performs the encrypt and decrypt operations.
+- An encryption key used to encrypt the Data Encryption Keys. 
+  Using a Key Encryption Key which never leaves Key Vault allows the 
+  data encryption keys themselves to be encrypted and controlled.
+
+- The entity that has access to the KEK may be different from the entity 
+  that requires the DEK. An entity may broker access to the DEK to 
+  limit the access of each DEK to a specific partition. Since the KEK 
+  is required to decrypt the DEKs, the KEK is effectively a single point 
+  by which DEKs can be effectively deleted by deletion of the KEK.
+
+- The Data Encryption Keys, encrypted with the Key Encryption Keys are 
+  stored separately and only an entity with access to the Key Encryption Key 
+  can decrypt these Data Encryption Keys.
+
+[Client Encryption model]
+Encryption performed outside of Azure 
+E.g. by a service or calling an application.
+
+[Server-Side Encryption, or SSE] 
+Encryption performed by Azure
+Namely the Resource Provider performs the encrypt and the decrypt operations.
 
 Azure Disk Encryption for virtual machines and virtual machine scale sets
 https://docs.microsoft.com/en-us/azure/security/fundamentals/azure-disk-encryption-vms-vmss
 
-Your key vault and VMs must be in the same subscription. Also, to ensure that encryption secrets do not cross regional boundaries, Azure Disk Encryption requires the Key Vault and the VMs to be co-located in the same region. Create and use a Key Vault that is in the same subscription and region as the VMs to be encrypted.
+- Your key vault and VMs must be in the same subscription. 
+
+- To ensure that encryption secrets do not cross regional boundaries, 
+  Azure Disk Encryption requires the Key Vault and the VMs to be co-located 
+  in the same region. Create and use a Key Vault that is in the same subscription 
+  and region as the VMs to be encrypted.
 '
 
 az login
@@ -24,8 +57,13 @@ az account list -o table
 initial='da'
 
 region='southcentralus'
+
 imageName='ubuntults'
+#vmImg='win2016datacenter'
+
 vmSize='Standard_B2ms'
+#vmSize='Standard_D2s_v3'
+
 adminId='alice'
 
 # Session Tag
@@ -85,13 +123,16 @@ az keyvault update -g $rgName -n $kvName  \
 :'
 https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/disk-encryption-key-vault#set-up-a-key-encryption-key-kek
 
-When a key encryption key is specified, Azure Disk Encryption uses that key to wrap the encryption secrets before writing to Key Vault.
+- When a key encryption key is specified, Azure Disk Encryption uses 
+  that key to wrap the encryption secrets before writing to Key Vault.
 
-Must generate an RSA key type; Azure Disk Encryption does not yet support using Elliptic Curve keys.
+- Must generate an RSA key type; Azure Disk Encryption does not yet 
+  support using Elliptic Curve keys.
 
-A key vault KEK URLs must be versioned. Azure enforces this restriction of versioning.
+- A key vault KEK URLs must be versioned. 
 
-Azure Disk Encryption does not support specifying port numbers as part of key vault secrets and KEK URLs.
+- Azure Disk Encryption does not support specifying port numbers 
+  as part of key vault secrets and KEK URLs.
 '
 time \
   az keyvault key create -n $kekName --vault-name $kvName --kty RSA
@@ -123,7 +164,7 @@ az vm encryption show -g $rgName -n $vmName -o table
 #---------------------------------
 # CREATING VMSS WITH DATA DISK(S)
 #---------------------------------
-# Miminal settings
+# Option 1 - Miminal settings
 az vmss create -g $rgName -n $vmssName \
   --vm-sku $vmSize --instance-count 2 --storage-sku $storageSku \
   --image $imageName --generate-ssh-keys \
@@ -132,7 +173,7 @@ az vmss create -g $rgName -n $vmssName \
 
 az vmss list -o table
 
-# Custom settings
+# Option 2 - Custom settings
 az vmss create -g $rgName -n $vmssName \
   --vm-sku $vmSize --instance-count 2 --storage-sku $storageSku \
   --image $imageName --generate-ssh-keys \
@@ -145,10 +186,10 @@ az vmss create -g $rgName -n $vmssName \
   --lb $ID'-lb' ----lb-nat-pool-name $ID'-lbnatpool'\
   --no-wait
 
-:'
+:' 
   --admin-username $adminId \
 
-# Do not use managed disk to persist VM.
+# Not to use managed disk to persist VM.
   --use-unmanaged-disk \
 '
 
@@ -217,7 +258,12 @@ For Linux VM, it becomes non-accessable during encryption period.
 '
 
 :'
-The upgrade policy on the scale set created in an earlier step is set to automatic, the VM instances automatically start the encryption process. On scale sets where the upgrade policy is to manual, start the encryption policy on the VM instances with az vmss update-instances.
+The upgrade policy on the scale set created in an earlier step 
+is set to automatic, the VM instances automatically start the 
+encryption process. 
+
+On scale sets where the upgrade policy is to manual, start the 
+encryption policy on the VM instances with az vmss update-instances.
 '
 
 # Enable encryption of the data disks in a scale set
@@ -241,6 +287,3 @@ az vmss encryption show -g $rgName -n $vmssName
 az vmss encryption disable -g $rgName -n $vmssName \
   --force -no-wait
 #  --volume-type DATA \
-
-
-
