@@ -59,7 +59,19 @@ initial='da'
 region='southcentralus'
 
 imageName='ubuntults'
-#vmImg='win2016datacenter'
+#imageNaME='win2016datacenter'
+:'
+# Looking for Gen2 image
+az vm image list -l $region -o table
+
+# URN
+Canonical:UbuntuServer:18.04-LTS:latest
+MicrosoftWindowsServer:WindowsServer:2019-Datacenter:latest 
+
+az vm image list --publisher Canonical --sku gen2 --output table --all
+az vm image list --publisher Windows --sku gen2 --output table --all
+az vm image list --publisher SQL --sku gen2 --output table --all
+'
 
 vmSize='Standard_B2ms'
 #vmSize='Standard_D2s_v3'

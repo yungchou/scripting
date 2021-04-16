@@ -8,8 +8,8 @@ $createAvSet = 0      # 0=AvSet already exists, 1=Create the AvSet (Requires $us
 
 ### Required Variables
 
-$rgName = '??'
-$vmName = ''
+$rgName = 'da111'
+$vmName = 'da-classic'
 $vmSize = "Standard_D13_v2_Promo"
 $nicName = $vmName'-nic'
 
