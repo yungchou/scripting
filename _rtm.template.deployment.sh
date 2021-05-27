@@ -17,7 +17,7 @@ echo "Session tag = $tag"
 # 1. Create resource group
 #--------------------------
 rgName=$tag
-az group create -n $rgName --location $region -o table
+az group create -n $rgName -l $region -o table
 
 :'To clean up
 az group delete -g $rgName -y --no-wait
@@ -25,9 +25,17 @@ az group delete -g $rgName -y --no-wait
 #--------------------
 # 2. Deploy template
 #--------------------
-templateFile="{provide-the-path-to-the-template-file}"
+templateFile="$pwd\sample.template.json"  # cloud shell
+#templateFile="\sample.template.json"
 deploymentName=$rgName
 
 az deployment group create -n $deploymentName -g $rgName -o table \
   --template-file $templateFile
   --verbose
+
+  NEED TO TROUBLESHOOT THE ERROR
+  "error": {
+    "code": "InvalidParameter",
+    "message": "Parameter 'osDisk.managedDisk.id' is not allowed.",
+    "target": "osDisk.managedDisk.id"
+  }
