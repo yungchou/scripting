@@ -10,8 +10,6 @@ subId='????'
 az account set --subscription $subId
 az account show --subscription $subId -query tenantId
 
-# Source VM
-vmName = "recreateVM"
  
 # Export the JSON file of a source VM
 # https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-cli#export-resource-groups-to-templates
@@ -19,17 +17,19 @@ vmName = "recreateVM"
 echo "Enter the Resource Group name:" &&
 read rgName &&
 
-rgName = "recreateVM"
+# Source objects
+vmName="??"
+rgName="??"
 
 az group export --name $rgName
 
 
-Get-AzureRmVM -ResourceGroupName $rgname -Name $vmname | ConvertTo-Json -depth 100 | Out-file -FilePath c:\temp\$vmname.json
+Get-AzureRmVM -ResourceGroupName $rgName -Name $vmName | ConvertTo-Json -depth 100 | Out-file -FilePath c:\temp\$vmname.json
  
-# Stop deallocate the VM;
+# Stop deallocate the source VM;
 Stop-AzureRmVM -ResourceGroupName $rgName -Name $vmName
  
-# Remove the VM
+# Remove the source VM
 Remove-AzureRmVM -ResourceGroupName $rgName -Name $vmName
  
  
