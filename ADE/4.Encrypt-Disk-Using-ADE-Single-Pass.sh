@@ -24,7 +24,6 @@ To remove a key encryption key, call the enable command again without the key en
 If the need is encryption-at-rest, use SSE+CMK to encrypt the disk.
 If the need is end-to-end encryption, use ADE (BEK or KEK|BEK) which encrypts the OS drive.
 
-
 '
 #-----
 # BEK

@@ -1,0 +1,77 @@
+{
+	"DiskEncryptionDataVersion": "4.0",
+	"DiskEncryptionOperation": "EnableEncryption",
+	"Disks": [
+		{
+			"ControllerId": 0,
+			"ControllerType": "IDE",
+			"SlotId": 0,
+			"Volumes": [
+				{
+					"ProtectorFileName": "062A48B8-F864-4A1A-919C-0C599ABE9B68.BEK",
+					"SecretTags": [
+						{
+							"Name": "DiskEncryptionKeyFileName",
+							"Value": "062A48B8-F864-4A1A-919C-0C599ABE9B68.BEK"
+						},
+						{ "Name": "VolumeLetter", "Value": "C:\\" },
+						{ "Name": "VolumeLabel", "Value": "Windows" },
+						{ "Name": "MachineName", "Value": "OrionAZ" },
+						{
+							"Name": "DiskEncryptionKeyEncryptionKeyURL",
+							"Value": "https://kvngnrsy5a3xu7y.vault.azure.net/keys/Orion-bek/973f5db983d840aba090cc503006ff9d"
+						},
+						{
+							"Name": "DiskEncryptionKeyEncryptionAlgorithm",
+							"Value": "RSA-OAEP"
+						}
+					],
+					"VolumeType": "OsVolume"
+				}
+			]
+		},
+		{
+			"ControllerId": 1,
+			"ControllerType": "SCSI",
+			"SlotId": 0,
+			"Volumes": [
+				{
+					"ProtectorFileName": "533E06CE-86C9-476D-BE31-610EA43E7EAF.BEK",
+					"SecretTags": [
+						{
+							"Name": "DiskEncryptionKeyFileName",
+							"Value": "533E06CE-86C9-476D-BE31-610EA43E7EAF.BEK"
+						},
+						{ "Name": "VolumeLetter", "Value": "D:\\" },
+						{ "Name": "VolumeLabel", "Value": "DataDisk" },
+						{ "Name": "MachineName", "Value": "OrionAZ" },
+						{
+							"Name": "DiskEncryptionKeyEncryptionKeyURL",
+							"Value": "https://kvngnrsy5a3xu7y.vault.azure.net/keys/Orion-bek/973f5db983d840aba090cc503006ff9d"
+						},
+						{
+							"Name": "DiskEncryptionKeyEncryptionAlgorithm",
+							"Value": "RSA-OAEP"
+						}
+					],
+					"VolumeType": "DataVolume"
+				}
+			]
+		}
+	],
+	"KekAlgorithm": "RSA-OAEP",
+	"KekUrl": "https://kvngnrsy5a3xu7y.vault.azure.net/keys/Orion-bek/973f5db983d840aba090cc503006ff9d",
+	"KekVaultResourceId": "/subscriptions/59afd738-501e-45db-bc5f-872b6628a613/resourceGroups/Prod-orion-WestUS-RG/providers/Microsoft.KeyVault/vaults/kvngnrsy5a3xu7y",
+	"KeyVaultResourceId": "/subscriptions/59afd738-501e-45db-bc5f-872b6628a613/resourceGroups/Prod-orion-WestUS-RG/providers/Microsoft.KeyVault/vaults/kvngnrsy5a3xu7y",
+	"KeyVaultUrl": "https://kvngnrsy5a3xu7y.vault.azure.net/",
+	"Protectors": [
+		{
+			"Base64Key": "<Hidden>",
+			"Name": "062A48B8-F864-4A1A-919C-0C599ABE9B68.BEK"
+		},
+		{
+			"Base64Key": "<Hidden>",
+			"Name": "533E06CE-86C9-476D-BE31-610EA43E7EAF.BEK"
+		}
+	]
+}

@@ -26,6 +26,7 @@ For information about using customer-managed keys with shared image galleries, s
 #---------------
 $prefix='da'
 tag=$prefix$(date +%M%S)
+tag=ADE
 region='southcentralus'
 
 #------------------
