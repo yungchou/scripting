@@ -113,12 +113,8 @@ fi
 #echo "Creating a NSG, $nsgName, associated with the vnet, $vnetName..."
 az network nsg create -g $rgName -n $nsgName -o none
 #echo "Creating a NSG rule, $nsgRule, associated with the NSG ,$nsgName..."
-az network nsg rule create -g $rgName \
-  --nsg-name $nsgName \
-  -n $nsgRule \
-  --protocol Tcp \
-  --access Allow \
-  --priority $priority \
+az network nsg rule create -g $rgName -n $nsgRule \
+  --nsg-name $nsgName  --protocol Tcp --access Allow --priority $priority \
   --destination-port-ranges $ssh $rdp $http $https \
   --description '*** FOR TESTING ONLY, NOT FOR PRODUCTION ***' \
   --verbose \

@@ -2,6 +2,8 @@
 Create a Windows virtual machine from a Resource Manager template
 https://docs.microsoft.com/en-us/azure/virtual-machines/windows/ps-template
 #>
+
+<#
 $AzCred = Get-Credential -UserName <username>
 az login -u $AzCred.UserName -p $AzCred.GetNetworkCredential().Password
 
@@ -10,6 +12,14 @@ $location = Read-Host -Prompt "Enter the location (i.e. centralus)"
 $adminUsername = Read-Host -Prompt "Enter the administrator username"
 $adminPassword = Read-Host -Prompt "Enter the administrator password" -AsSecureString
 $dnsLabelPrefix = Read-Host -Prompt "Enter an unique DNS name for the public IP"
+#>
+
+$rgName = Read-Host -Prompt "Enter the Resource Group name"
+$location = Read-Host -Prompt "Enter the location (i.e. centralus)"
+$adminUsername = Read-Host -Prompt "Enter the administrator username"
+$adminPassword = Read-Host -Prompt "Enter the administrator password" -AsSecureString
+$dnsLabelPrefix = Read-Host -Prompt "Enter an unique DNS name for the public IP"
+
 
 New-AzResourceGroup -Name $rgName -Location "$location"
 New-AzResourceGroupDeployment `

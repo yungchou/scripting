@@ -25,14 +25,16 @@ New-AzVmss `
 #	Explain how to migrate from BEK to KEK encryption.
 # manage-bde –status
 
-$KvRgName = 'daade1';
 $VmRgName = 'daade1';
 $vmName = 'vmnodisk';
+
+$KvRgName = 'daade1';
 $KeyVaultName = 'da-adekv';
 $keyEncryptionKeyName = 'adekey';
 $KeyVault = Get-AzKeyVault -VaultName $KeyVaultName -ResourceGroupName $KvRgName;
 $diskEncryptionKeyVaultUrl = $KeyVault.VaultUri;
 $KeyVaultResourceId = $KeyVault.ResourceId;
+
 $keyEncryptionKeyUrl = (Get-AzKeyVaultKey -VaultName $KeyVaultName -Name $keyEncryptionKeyName).Key.kid;
 $sequenceVersion = [Guid]::NewGuid();
 
