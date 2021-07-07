@@ -1,12 +1,12 @@
+<<Block_comment
 #-------------------------------------------------------------------
 # Sign in with Azure CLI
 # https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli
 #-------------------------------------------------------------------
-#az login -o table
-#az login -u <username> -p <password>
+az login -o table
+az login -u <username> -p <password>
 read -sp "Azure password: " AZ_PASS && echo && az login -u <username> -p $AZ_PASS
 
-<<Block_comment
 #------------------
 # Set subscription
 #------------------
@@ -24,12 +24,12 @@ tag=$prefix$(date +%M%S)
 
 region='southcentralus'
 
-adminUser='demoUser'
-adminPwd='testOnlyPeriod!'
+adminUser='testuser'
+adminPwd='4testingonly!'
 
 #vmImage='ubuntults'
-vmImage='win2016datacenter'
-#vmImage='win2019datacenter'
+#vmImage='win2016datacenter'
+vmImage='win2019datacenter'
 
 <<Block_comment
 #-------------------
@@ -76,15 +76,17 @@ az vm show -g $rgName -n $vmName -o table
 az resource list -g $ResourceGroupName -o table
 
 # Open ports
-az vm open-port --nsg-name $($vmName+'nsg'+$nsgPriority) --port $openPorts \
-  -g $rgName -n $vmName \
+az vm open-port -g $rgName -n $vmName \
+  --nsg-name $($vmName+'nsg'+$nsgPriority) \
+  --port $openPorts \
   -o table
 
 # CustomScriptExtension
 # Log: "C:\WindowsAzure\Logs\Plugins\Microsoft.Compute.CustomScriptExtension”
-az vm extension set -name CustomScriptExtension --publisher Microsoft.Compute \
-  -g $rgName --vm-name $vmName \
-  --settings '{"commandToExecute":"cd\; mkdir CustomScriptExtension"}'
+az vm extension set -g $rgName --vm-name $vmName \
+  -name CustomScriptExtension \
+  --publisher Microsoft.Compute \
+  --settings '{"commandToExecute":"cd\; mkdir byCustomScriptExtension"}'
 
 <<Block_comment
   --settings '{

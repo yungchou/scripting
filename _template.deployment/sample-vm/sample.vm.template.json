@@ -76,56 +76,56 @@
 		},
 		"existingVirtualNetworkName": {
 			"type": "string",
-			"defaultValue": "",
+			"defaultValue": "zulu-net",
 			"metadata": {
 				"description": "Name of the existing VNET"
 			}
 		},
 		"vmIPAddress": {
 			"type": "string",
-			"defaultValue": "dynamic",
+			"defaultValue": "static",
 			"metadata": {
 				"description": "Static IP for VM"
 			}
 		},
 		"existingVirtualNetworkResourceGroup": {
 			"type": "string",
-			"defaultValue": "",
+			"defaultValue": "zulu",
 			"metadata": {
 				"description": "Name of the existing VNET resource group"
 			}
 		},
 		"subnetName": {
 			"type": "string",
-			"defaultValue": "default",
+			"defaultValue": "one",
 			"metadata": {
 				"description": "Name of the subnet in the virtual network you want to use"
 			}
 		},
 		"domainUsername": {
 			"type": "string",
-			"defaultValue": "",
+			"defaultValue": "dutestuser",
 			"metadata": {
 				"description": "Username of the account with permissions to join this machine to the domain"
 			}
 		},
 		"domainPassword": {
 			"type": "securestring",
-			"defaultValue": "",
+			"defaultValue": "forTestingOnly!",
 			"metadata": {
 				"description": "Password of the account account with permissions to join this machine to the domain"
 			}
 		},
 		"ouPath": {
 			"type": "string",
-			"defaultValue": "",
+			"defaultValue": "testOnly",
 			"metadata": {
 				"description": "Specifies an organizational unit (OU) for the domain account. Enter the full distinguished name of the OU in quotation marks. Example: \"OU=ResearchDevelopment,DC=dot,DC=state,DC=nv,DC=us\""
 			}
 		},
 		"fullyprovision": {
 			"type": "string",
-			"defaultValue": "",
+			"defaultValue": "Yes",
 			"allowedValues": ["Yes", "No"],
 			"metadata": {
 				"description": "Run provisioning scripts"
@@ -134,10 +134,10 @@
 		"tags": {
 			"type": "object",
 			"defaultValue": {
-				"createdBy": "",
-				"Division": "",
-				"Environment": "",
-				"Section": ""
+				"createdBy": "jimi",
+				"Division": "rock",
+				"Environment": "solid",
+				"Section": "gold"
 			},
 			"metadata": {
 				"description": "description"
@@ -153,7 +153,7 @@
 		},
 		"notificationEmail": {
 			"type": "string",
-			"defaultValue": "",
+			"defaultValue": "notThere@fake.one",
 			"metadata": {
 				"description": "Shutdown Notification e-Mail"
 			}

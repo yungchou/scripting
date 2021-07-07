@@ -11,7 +11,7 @@ To deploy,
 4. Copy and paste the statements of CUSTOMIZATION and STANDARDIZED ROUTINE  
    to the Azure Cloud Shell session
 
-© 2020 Yung Chou. All Rights Reserved.
+© 2021 Yung Chou. All Rights Reserved.
 '
 #---------
 # CONTEXT
@@ -19,6 +19,7 @@ To deploy,
 :' As needed
 az login
 
+# Set subscription
 az account list -o table
 subName="mySubscriptionName"
 az account set -s $subName
@@ -56,8 +57,8 @@ Password must have the 3 of the following:
 read -p "Enter the admin id for the $totalVMs VMs to be deployed " adminUser
 read -sp "Enter the password for the $totalVMs VMs to be deployed " adminPwd
 '
-# For testing
-adminID='hendrix'
+# Never in production
+adminID='testuser'
 adminPwd='4testingonly!'
 
 totalVM=1

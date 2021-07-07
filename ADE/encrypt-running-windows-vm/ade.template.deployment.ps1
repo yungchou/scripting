@@ -1,2 +1,12 @@
-New-AzResourceGroup -Name <resource-group-name> -Location <resource-group-location> #use this command when you need to create a new resource group for your deployment
-New-AzResourceGroupDeployment -ResourceGroupName <resource-group-name> -TemplateUri https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.compute/encrypt-running-windows-vm/azuredeploy.json
+
+$rgName = 'da110'
+$region = 'southcentralus'
+New-AzResourceGroup -Name $rgName -Location $region 
+#use this command when you need to create a new resource group for your deployment
+
+$templateUri = 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.compute/encrypt-running-windows-vm/azuredeploy.json'
+
+New-AzResourceGroupDeployment `
+  -ResourceGroupName $rgName `
+  -TemplateUri $templateUri
+  

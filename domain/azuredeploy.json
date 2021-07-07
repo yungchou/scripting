@@ -9,35 +9,36 @@
 				"description": "The name of the Administrator of the new VM and Domain"
 			}
     },
-		"location": {
-			"type": "string",
-      "defaultValue": "southcentralus",
-			"allowedValues": [
-        "southcentralus",
-				"centralus",
-				"eastus",
-				"eastus2",
-				"francecentral",
-				"northeurope",
-				"southeastasia",
-				"ukwest",
-				"westus2",
-				"westeurope"
-			],
-			"metadata": {
-				"description": "Location for the VM, only certain regions support zones during preview."
-			}
-		},
 		"adminPassword": {
 			"type": "securestring",
-      "defaultValue": "testuser",
+      "defaultValue": "forTestingOnly!",
 			"metadata": {
 				"description": "The password for the Administrator account of the new VM and Domain"
 			}
 		},
+    "location": {
+      "type": "string",
+      "defaultValue": "southcentralus",
+      "allowedValues": [
+        "southcentralus",
+        "centralus",
+        "eastus",
+        "eastus2",
+        "westus",
+        "westus2",
+        "francecentral",
+        "northeurope",
+        "southeastasia",
+        "ukwest",
+        "westus2",
+        "westeurope"
+      ],
+      "metadata": {
+        "description": "Location for the VM, only certain regions support zones during preview."
+		},
 		"domainName": {
 			"type": "string",
-			"defaultValue": "contoso.local",
+			"defaultValue": "fake.one",
 			"metadata": {
 				"description": "The FQDN of the AD Domain created "
 			}
@@ -52,10 +53,25 @@
 		"vmSize": {
 			"type": "string",
 			"defaultValue": "Standard_D2s_v3",
-			"metadata": {
-				"description": "Size of the VM for the controller"
-			}
+      "allowedValues": [
+        "Standard_B2s",
+        "Standard_B2ms",
+        "Standard_D2s_v3",
+        "Standard_D4s_v3",
+        "Standard_E8as_v4"
+      ],
+      "metadata": {
+        "description": "Size of the VM for the controller"
+      }
 		},
+    "dataDisksCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "allowedValues": [ 1, 2, 3, 4, 5, 6, 7, 8 ],
+      "metadata": {
+        "description": "Number of Data Disks"
+      }
+    },
 		"_artifactsLocation": {
 			"type": "string",
 			"metadata": {
